@@ -1,0 +1,17 @@
+#!/usr/env php
+<?php
+
+use Riimu\AdventOfCode2023\Application;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+(static function () {
+    error_reporting(E_ALL);
+
+    set_error_handler(static function (string $message, int $severity, string $filename, int $line): never {
+        throw new ErrorException($message, 0, $severity, $filename, $line);
+    });
+
+    $application = new Application();
+    $application->run();
+})();
