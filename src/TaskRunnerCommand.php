@@ -32,7 +32,7 @@ class TaskRunnerCommand extends Command
     protected function configure()
     {
         $this
-            ->setName(sprintf('task:%s', substr($this->taskClass, strrpos($this->taskClass, '\\') + 1)))
+            ->setName(sprintf('task:%s', substr($this->taskClass, strrpos($this->taskClass, '\\') + 1, -4)))
             ->setDescription('Runs the task and prints out the solutions')
             ->addArgument('input-file', InputArgument::REQUIRED, 'Path to the task input file');
     }

@@ -18,14 +18,14 @@ interface TaskInterface
     public static function createTask(): static;
 
     /**
-     * @param T $input
-     * @return string
-     */
-    public function solveTask(TaskInputInterface $input): string;
-
-    /**
      * @param string $input
      * @return T
      */
     public function parseInput(string $input): TaskInputInterface;
+
+    /**
+     * @param T $input
+     * @return string
+     */
+    public function solveTask(TaskInputInterface $input): string;
 }

@@ -11,9 +11,8 @@ use Riimu\AdventOfCode2023\TaskInterface;
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2023 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
- * @implements TaskInterface<Day1Input>
  */
-class Day1Part2Task implements TaskInterface
+class Day1Part2Task extends AbstractDay1Task
 {
     private const DIGITS = [
         '0' => 0,
@@ -39,56 +38,6 @@ class Day1Part2Task implements TaskInterface
 
     public static function createTask(): static
     {
-        return new self();
+        return new self(self::DIGITS);
     }
-
-    public function solveTask(T $input): string
-    {
-        $calibrationValues = [];
-
-        foreach ($input->lines as $line) {
-            $firstDigit = $this->findFirstDigit($line);
-            $lastDigit = $this->findLastDigit($line);
-
-            $calibrationValues[] = $firstDigit === 0
-                ? $lastDigit
-                : $firstDigit * 10 + $lastDigit;
-        }
-
-        return (string) array_sum($calibrationValues);
-    }
-
-    public function findFirstDigit(string $line): int
-    {
-        static $pattern;
-
-        $pattern ??= sprintf('/%s/', implode('|', array_map(
-            static fn (string $x): string => preg_quote($x, '/'),
-            array_keys(self::DIGITS)
-        )));
-
-        preg_match($pattern, $line, $match);
-
-        return self::DIGITS[$match[0]];
-    }
-
-    public function findLastDigit(string $line): int
-    {
-        static $pattern;
-
-        $pattern ??= sprintf('/.*(%s)/', implode('|', array_map(
-            static fn (string $x): string => preg_quote($x, '/'),
-            array_keys(self::DIGITS)
-        )));
-
-        preg_match($pattern, $line, $match);
-
-        return self::DIGITS[$match[1]];
-    }
-
-    public function parseInput(string $input): T
-    {
-        return new Day1Input(preg_split('/[\r\n]+/', trim($input)));
-    }
-
 }

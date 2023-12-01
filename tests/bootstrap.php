@@ -2,8 +2,10 @@
 
 error_reporting(E_ALL);
 
-set_error_handler(static function (string $message, int $severity, string $filename, int $line): never {
-    throw new ErrorException($message, 0, $severity, $filename, $line);
+set_error_handler(static function (int $level, string $error, string $file, int $line): void {
+    if (error_reporting() & $level) {
+        throw new ErrorException($error, 0, $level, $file, $line);
+    }
 });
 
 require __DIR__ . '/../vendor/autoload.php';
