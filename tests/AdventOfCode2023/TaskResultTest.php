@@ -1,0 +1,41 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Riimu\AdventOfCode2023\Test;
+
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+use Riimu\AdventOfCode2023\TaskInterface;
+use Riimu\AdventOfCode2023\Task;
+
+/**
+ * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
+ * @copyright Copyright (c) 2023 Riikka Kalliomäki
+ * @license http://opensource.org/licenses/mit-license.php MIT License
+ */
+class TaskResultTest extends TestCase
+{
+    /**
+     * @param class-string<TaskInterface> $taskClass
+     * @param string $inputFile
+     * @param string $result
+     * @return void
+     */
+    #[DataProvider('resultTestProvider')]
+    public function testTaskResults(string $taskClass, string $inputFile, string $result): void
+    {
+        $task = $taskClass::createTask();
+        $input = $task->parseInput(file_get_contents($inputFile));
+
+        $this->assertSame($result, $task->solveTask($input));
+    }
+
+    public static function resultTestProvider(): iterable
+    {
+        yield [Task\Day1\Day1Part1Task::class, __DIR__ . '/../../input/day-1-sample-1.txt', '142'];
+        yield [Task\Day1\Day1Part1Task::class, __DIR__ . '/../../input/day-1-input.txt', '55090'];
+        yield [Task\Day1\Day1Part2Task::class, __DIR__ . '/../../input/day-1-sample-2.txt', '281'];
+        yield [Task\Day1\Day1Part2Task::class, __DIR__ . '/../../input/day-1-input.txt', '54845'];
+    }
+}

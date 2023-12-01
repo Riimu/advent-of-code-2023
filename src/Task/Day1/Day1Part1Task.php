@@ -17,6 +17,11 @@ class Day1Part1Task implements TaskInterface
 {
     private const DIGITS = '0123456789';
 
+    public static function createTask(): static
+    {
+        return new self();
+    }
+
     public function solveTask(T $input): string
     {
         $calibrationValues = [];

@@ -13,6 +13,11 @@ namespace Riimu\AdventOfCode2023;
 interface TaskInterface
 {
     /**
+     * @return static
+     */
+    public static function createTask(): static;
+
+    /**
      * @param T $input
      * @return string
      */

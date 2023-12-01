@@ -37,6 +37,11 @@ class Day1Part2Task implements TaskInterface
         'nine' => 9,
     ];
 
+    public static function createTask(): static
+    {
+        return new self();
+    }
+
     public function solveTask(T $input): string
     {
         $calibrationValues = [];

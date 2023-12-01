@@ -39,15 +39,19 @@ class TaskRunnerCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $task = $this->createTask();
+        $task = $this->createTask($this->taskClass);
         $output->writeln($task->solveTask($task->parseInput($this->readInput($input->getArgument('input-file')))));
 
         return Command::SUCCESS;
     }
 
-    private function createTask(): TaskInterface
+    /**
+     * @param class-string<TaskInterface> $taskClass
+     * @return TaskInterface
+     */
+    private function createTask(string $taskClass): TaskInterface
     {
-        return new $this->taskClass();
+        return $taskClass::createTask();
     }
 
     private function readInput(string $filename): string
