@@ -26,7 +26,7 @@ abstract class AbstractDay1Task implements TaskInterface
     {
         $this->digits = $digits;
         $this->digitPattern = implode('|', array_map(
-            static fn (string $x): string => preg_quote($x, '/'),
+            static fn(string $x): string => preg_quote($x, '/'),
             array_keys($digits)
         ));
     }
