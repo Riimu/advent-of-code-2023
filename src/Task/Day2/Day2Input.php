@@ -18,7 +18,5 @@ class Day2Input implements TaskInputInterface
      */
     public function __construct(
         public readonly array $games
-    )
-    {
-    }
+    ) {}
 }
