@@ -24,5 +24,9 @@
         "allow-plugins": {
             "ergebnis/composer-normalize": true
         }
+    },
+    "scripts": {
+        "php-cs-fixer": "php-cs-fixer fix -v --using-cache=no",
+        "phpunit": "phpunit"
     }
 }
