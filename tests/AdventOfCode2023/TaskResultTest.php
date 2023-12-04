@@ -50,5 +50,7 @@ class TaskResultTest extends TestCase
 
         yield [Task\Day4\Day4Part1Task::class, __DIR__ . '/../../input/day-4-sample-1.txt', '13'];
         yield [Task\Day4\Day4Part1Task::class, __DIR__ . '/../../input/day-4-input.txt', '19855'];
+        yield [Task\Day4\Day4Part2Task::class, __DIR__ . '/../../input/day-4-sample-1.txt', '30'];
+        yield [Task\Day4\Day4Part2Task::class, __DIR__ . '/../../input/day-4-input.txt', '10378710'];
     }
 }
