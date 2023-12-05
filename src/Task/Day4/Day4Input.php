@@ -18,7 +18,5 @@ class Day4Input implements TaskInputInterface
      */
     public function __construct(
         public readonly array $scratchCards
-    )
-    {
-    }
+    ) {}
 }

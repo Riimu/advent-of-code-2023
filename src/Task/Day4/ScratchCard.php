@@ -18,7 +18,5 @@ class ScratchCard
     public function __construct(
         public readonly array $winningNumbers,
         public readonly array $cardNumbers,
-    )
-    {
-    }
+    ) {}
 }
