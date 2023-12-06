@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Riimu\AdventOfCode2023\Task\Day1;
 
-use Riimu\AdventOfCode2023\TaskInputInterface as T;
-use Riimu\AdventOfCode2023\TaskInterface;
-
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2023 Riikka Kalliomäki
@@ -38,6 +35,6 @@ class Day1Part2Task extends AbstractDay1Task
 
     public static function createTask(): static
     {
-        return new self(self::DIGITS);
+        return new static(self::DIGITS);
     }
 }

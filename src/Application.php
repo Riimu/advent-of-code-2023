@@ -26,12 +26,16 @@ class Application extends \Symfony\Component\Console\Application
         $finder->in(__DIR__ . '/Task')->name('*Task.php');
 
         foreach ($finder as $file) {
-            $this->processFoundClass(sprintf(
+            $className = sprintf(
                 '%s\Task\%s\%s',
                 __NAMESPACE__,
                 $file->getPathInfo()->getBasename(),
                 $file->getFilenameWithoutExtension()
-            ));
+            );
+
+            if (class_exists($className)) {
+                $this->processFoundClass($className);
+            }
         }
     }
 
@@ -41,10 +45,6 @@ class Application extends \Symfony\Component\Console\Application
      */
     private function processFoundClass(string $class): void
     {
-        if (!class_exists($class)) {
-            return;
-        }
-
         if (!is_a($class, TaskInterface::class, true)) {
             return;
         }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Riimu\AdventOfCode2023\Task\Day1;
 
+use Riimu\AdventOfCode2023\Parse;
 use Riimu\AdventOfCode2023\TaskInputInterface;
 use Riimu\AdventOfCode2023\TaskInterface;
 
@@ -15,25 +16,25 @@ use Riimu\AdventOfCode2023\TaskInterface;
  */
 abstract class AbstractDay1Task implements TaskInterface
 {
-    /** @var array<string, int> */
+    /** @var array<string|int, int> */
     private readonly array $digits;
     private readonly string $digitPattern;
 
     /**
-     * @param array<string, int> $digits
+     * @param array<string|int, int> $digits
      */
-    public function __construct(array $digits)
+    final public function __construct(array $digits)
     {
         $this->digits = $digits;
         $this->digitPattern = implode('|', array_map(
-            static fn(string $x): string => preg_quote($x, '/'),
+            static fn(string|int $x): string => preg_quote((string) $x, '/'),
             array_keys($digits)
         ));
     }
 
     public function parseInput(string $input): TaskInputInterface
     {
-        return new Day1Input(preg_split('/[\r\n]+/', trim($input)));
+        return new Day1Input(Parse::lines($input));
     }
 
     public function solveTask(TaskInputInterface $input): string

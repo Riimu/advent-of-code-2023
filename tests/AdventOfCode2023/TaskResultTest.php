@@ -6,8 +6,8 @@ namespace Riimu\AdventOfCode2023\Test;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Riimu\AdventOfCode2023\TaskInterface;
 use Riimu\AdventOfCode2023\Task;
+use Riimu\AdventOfCode2023\TaskInterface;
 
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>

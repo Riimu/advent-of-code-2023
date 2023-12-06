@@ -7,6 +7,7 @@
     "require-dev": {
         "ergebnis/composer-normalize": "^2.39",
         "friendsofphp/php-cs-fixer": "^3.40",
+        "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.5",
         "roave/security-advisories": "dev-latest"
     },
@@ -26,7 +27,13 @@
         }
     },
     "scripts": {
+        "ci": [
+            "@composer normalize",
+            "@php-cs-fixer",
+            "@phpunit"
+        ],
         "php-cs-fixer": "php-cs-fixer fix -v --using-cache=no",
-        "phpunit": "phpunit"
+        "phpunit": "phpunit",
+        "phpstan": "phpstan analyse"
     }
 }

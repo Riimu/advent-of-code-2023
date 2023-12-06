@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 error_reporting(E_ALL);
 
 set_error_handler(static function (int $level, string $error, string $file, int $line): void {

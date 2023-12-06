@@ -13,14 +13,15 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2023 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
+ * @template T of TaskInputInterface
  */
 class TaskRunnerCommand extends Command
 {
-    /** @var class-string<TaskInterface> */
+    /** @var class-string<TaskInterface<T>> */
     private string $taskClass;
 
     /**
-     * @param class-string<TaskInterface> $taskClass
+     * @param class-string<TaskInterface<T>> $taskClass
      */
     public function __construct(string $taskClass)
     {
@@ -39,15 +40,21 @@ class TaskRunnerCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $inputFile = $input->getArgument('input-file');
+
+        if (!\is_string($inputFile)) {
+            throw new \UnexpectedValueException('Unexpected input file value');
+        }
+
         $task = $this->createTask($this->taskClass);
-        $output->writeln($task->solveTask($task->parseInput($this->readInput($input->getArgument('input-file')))));
+        $output->writeln($task->solveTask($task->parseInput($this->readInput($inputFile))));
 
         return Command::SUCCESS;
     }
 
     /**
-     * @param class-string<TaskInterface> $taskClass
-     * @return TaskInterface
+     * @param class-string<TaskInterface<T>> $taskClass
+     * @return TaskInterface<T>
      */
     private function createTask(string $taskClass): TaskInterface
     {
