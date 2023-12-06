@@ -14,43 +14,14 @@ use Riimu\AdventOfCode2023\TaskInterface;
  * @license http://opensource.org/licenses/mit-license.php MIT License
  * @implements TaskInterface<Day6Input>
  */
-class Day6Part2Task implements TaskInterface
+class Day6Part2Task extends AbstractDay6Task
 {
-    public static function createTask(): static
-    {
-        return new self();
-    }
-
-    public function parseInput(string $input): Day6Input
-    {
-        $sections = Parse::namedSections($input);
-
-        return new Day6Input(Parse::ints($sections['Time']), Parse::ints($sections['Distance']));
-    }
-
     public function solveTask(TaskInputInterface $input): string
     {
-        $time = (int) implode('', array_map(strval(...), $input->times));
-        $distance = (int) implode('', array_map(strval(...), $input->distances));
+        $time = Parse::int(implode('', array_map(strval(...), $input->times)));
+        $distance = Parse::int(implode('', array_map(strval(...), $input->distances)));
 
-        $minimum = 0;
-        $maximum = 0;
-
-        for ($i = 1; $i < $time; $i++) {
-            if (($time - $i) * $i > $distance) {
-                $minimum = $i;
-                break;
-            }
-        }
-
-        for ($i = $time - 1; $i > 0; $i--) {
-            if (($time - $i) * $i > $distance) {
-                $maximum = $i;
-                break;
-            }
-        }
-
-        return (string) ($maximum - $minimum + 1);
+        return (string) (self::calculateMaximum($time, $distance) - self::calculateMinimum($time, $distance) + 1);
     }
 
 }
