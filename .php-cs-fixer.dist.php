@@ -15,11 +15,13 @@ return (new PhpCsFixer\Config())
     ->setRules([
         '@PER-CS' => true,
 
+        'cast_spaces' => true,
         'declare_strict_types' => true,
         'ordered_imports' => [
             'imports_order' => ['class', 'function', 'const'],
             'sort_algorithm' => 'alpha',
         ],
+        'no_extra_blank_lines' => ['tokens' => ['extra', 'curly_brace_block']],
         'no_unused_imports' => true,
     ])
     ->setFinder($finder);

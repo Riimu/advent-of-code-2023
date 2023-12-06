@@ -17,11 +17,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class TaskRunnerCommand extends Command
 {
-    /** @var class-string<TaskInterface<T>> */
+    /** @var class-string<TaskInterface> */
     private string $taskClass;
 
     /**
-     * @param class-string<TaskInterface<T>> $taskClass
+     * @param class-string<TaskInterface> $taskClass
      */
     public function __construct(string $taskClass)
     {
@@ -30,7 +30,7 @@ class TaskRunnerCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName(sprintf('task:%s', substr($this->taskClass, strrpos($this->taskClass, '\\') + 1, -4)))
@@ -53,8 +53,8 @@ class TaskRunnerCommand extends Command
     }
 
     /**
-     * @param class-string<TaskInterface<T>> $taskClass
-     * @return TaskInterface<T>
+     * @param class-string<TaskInterface> $taskClass
+     * @return TaskInterface
      */
     private function createTask(string $taskClass): TaskInterface
     {

@@ -33,7 +33,7 @@
             "@phpunit"
         ],
         "php-cs-fixer": "php-cs-fixer fix -v --using-cache=no",
-        "phpunit": "phpunit",
-        "phpstan": "phpstan analyse"
+        "phpstan": "phpstan analyse",
+        "phpunit": "phpunit"
     }
 }

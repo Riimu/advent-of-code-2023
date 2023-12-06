@@ -78,7 +78,7 @@ class Day3Part1Task implements TaskInterface
 
     private function getSymbol(Day3Input $input, int $number, int $x, int $y): ?string
     {
-        $maxX = $x + \strlen((string)$number);
+        $maxX = $x + \strlen((string) $number);
         $maxY = $y + 1;
 
         for ($i = $y - 1; $i <= $maxY; $i++) {
@@ -100,5 +100,4 @@ class Day3Part1Task implements TaskInterface
     {
         return isset($input->map[$y][$x]) && !$this->isDigitAt($input, $x, $y) && $input->map[$y][$x] !== '.';
     }
-
 }

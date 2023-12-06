@@ -34,5 +34,4 @@ class Day4Part2Task extends AbstractDay4Task
 
         return (string) array_sum($totalCards);
     }
-
 }

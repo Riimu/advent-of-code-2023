@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Riimu\AdventOfCode2023\Task\Day6;
 
 use Riimu\AdventOfCode2023\Parse;
+use Riimu\AdventOfCode2023\TaskInputInterface;
 use Riimu\AdventOfCode2023\TaskInterface;
 
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2023 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
- * @implements TaskInterface<Day6Input>
  */
 abstract class AbstractDay6Task implements TaskInterface
 {
@@ -28,6 +28,17 @@ abstract class AbstractDay6Task implements TaskInterface
 
         return new Day6Input(Parse::ints($sections['Time']), Parse::ints($sections['Distance']));
     }
+
+    public function solveTask(TaskInputInterface $input): string
+    {
+        if (!$input instanceof Day6Input) {
+            throw new \InvalidArgumentException(sprintf("Unexpected input type '%s'", get_debug_type($input)));
+        }
+
+        return (string) $this->solve($input);
+    }
+
+    abstract protected function solve(Day6Input $input): int;
 
     protected static function calculateMinimum(int $time, int $distance): int
     {

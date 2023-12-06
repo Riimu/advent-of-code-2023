@@ -25,12 +25,20 @@ class TaskResultTest extends TestCase
     #[DataProvider('resultTestProvider')]
     public function testTaskResults(string $taskClass, string $inputFile, string $result): void
     {
+        $contents = file_get_contents($inputFile);
+
+        if (!\is_string($contents)) {
+            $this->fail("Could not read contents of the input file '$inputFile'");
+        }
         $task = $taskClass::createTask();
-        $input = $task->parseInput(file_get_contents($inputFile));
+        $input = $task->parseInput($contents);
 
         $this->assertSame($result, $task->solveTask($input));
     }
 
+    /**
+     * @return iterable<array<int, string>>
+     */
     public static function resultTestProvider(): iterable
     {
         yield [Task\Day1\Day1Part1Task::class, __DIR__ . '/../../input/day-1-sample-1.txt', '142'];

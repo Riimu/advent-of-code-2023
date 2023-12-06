@@ -26,10 +26,16 @@ class Application extends \Symfony\Component\Console\Application
         $finder->in(__DIR__ . '/Task')->name('*Task.php');
 
         foreach ($finder as $file) {
+            $parent = $file->getPathInfo();
+
+            if (!$parent instanceof \SplFileInfo) {
+                throw new \UnexpectedValueException(sprintf("No parent returned for path '%s'", $file->getPathname()));
+            }
+
             $className = sprintf(
                 '%s\Task\%s\%s',
                 __NAMESPACE__,
-                $file->getPathInfo()->getBasename(),
+                $parent->getBasename(),
                 $file->getFilenameWithoutExtension()
             );
 

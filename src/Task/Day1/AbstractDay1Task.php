@@ -12,7 +12,6 @@ use Riimu\AdventOfCode2023\TaskInterface;
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2023 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
- * @implements TaskInterface<Day1Input>
  */
 abstract class AbstractDay1Task implements TaskInterface
 {
@@ -32,12 +31,21 @@ abstract class AbstractDay1Task implements TaskInterface
         ));
     }
 
-    public function parseInput(string $input): TaskInputInterface
+    public function parseInput(string $input): Day1Input
     {
         return new Day1Input(Parse::lines($input));
     }
 
     public function solveTask(TaskInputInterface $input): string
+    {
+        if (!$input instanceof Day1Input) {
+            throw new \InvalidArgumentException(sprintf("Unexpected input type '%s'", get_debug_type($input)));
+        }
+
+        return (string) $this->solve($input);
+    }
+
+    protected function solve(Day1Input $input): int
     {
         $calibrationValues = [];
 
@@ -50,7 +58,7 @@ abstract class AbstractDay1Task implements TaskInterface
                 : $firstDigit * 10 + $lastDigit;
         }
 
-        return (string) array_sum($calibrationValues);
+        return array_sum($calibrationValues);
     }
 
     public function findFirstDigit(string $line): int

@@ -20,7 +20,7 @@ class Parse
         $lines = preg_split('/(\r\n|\r(?!\n)|(?<!\r)\n)/', trim($input), 0, PREG_SPLIT_NO_EMPTY);
 
         if (!\is_array($lines)) {
-            throw new \UnexpectedValueException("Unexpected value returned from preg_split");
+            throw new \UnexpectedValueException('Unexpected value returned from preg_split');
         }
 
         return $lines;
