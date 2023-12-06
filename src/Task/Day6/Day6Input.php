@@ -20,7 +20,5 @@ class Day6Input implements TaskInputInterface
     public function __construct(
         public readonly array $times,
         public readonly array $distances,
-    )
-    {
-    }
+    ) {}
 }
