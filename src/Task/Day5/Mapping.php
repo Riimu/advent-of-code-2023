@@ -9,11 +9,11 @@ namespace Riimu\AdventOfCode2023\Task\Day5;
  * @copyright Copyright (c) 2023 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
-class Mapping
+readonly class Mapping
 {
     public function __construct(
-        public readonly int $destinationStart,
-        public readonly int $sourceStart,
-        public readonly int $length,
+        public int $destinationStart,
+        public int $sourceStart,
+        public int $length,
     ) {}
 }

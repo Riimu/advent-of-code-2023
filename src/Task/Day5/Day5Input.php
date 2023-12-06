@@ -11,14 +11,14 @@ use Riimu\AdventOfCode2023\TaskInputInterface;
  * @copyright Copyright (c) 2023 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
-class Day5Input implements TaskInputInterface
+readonly class Day5Input implements TaskInputInterface
 {
     /**
      * @param array<int, int> $seeds
      * @param array<string, array<int, Mapping>> $maps
      */
     public function __construct(
-        public readonly array $seeds,
-        public readonly array $maps,
+        public array $seeds,
+        public array $maps,
     ) {}
 }

@@ -9,14 +9,14 @@ namespace Riimu\AdventOfCode2023\Task\Day4;
  * @copyright Copyright (c) 2023 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
-class ScratchCard
+readonly class ScratchCard
 {
     /**
      * @param array<int, int> $winningNumbers
      * @param array<int, int> $cardNumbers
      */
     public function __construct(
-        public readonly array $winningNumbers,
-        public readonly array $cardNumbers,
+        public array $winningNumbers,
+        public array $cardNumbers,
     ) {}
 }

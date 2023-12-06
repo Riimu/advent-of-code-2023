@@ -30,7 +30,8 @@
         "ci": [
             "@composer normalize",
             "@php-cs-fixer",
-            "@phpunit"
+            "@phpunit",
+            "@phpstan"
         ],
         "php-cs-fixer": "php-cs-fixer fix -v --using-cache=no",
         "phpstan": "phpstan analyse",

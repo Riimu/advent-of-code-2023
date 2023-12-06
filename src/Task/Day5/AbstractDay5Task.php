@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Riimu\AdventOfCode2023\Task\Day5;
 
 use Riimu\AdventOfCode2023\Parse;
-use Riimu\AdventOfCode2023\Task\Day6\Day6Input;
 use Riimu\AdventOfCode2023\TaskInputInterface;
 use Riimu\AdventOfCode2023\TaskInterface;
 

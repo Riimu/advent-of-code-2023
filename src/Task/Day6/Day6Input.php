@@ -11,14 +11,14 @@ use Riimu\AdventOfCode2023\TaskInputInterface;
  * @copyright Copyright (c) 2023 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
-class Day6Input implements TaskInputInterface
+readonly class Day6Input implements TaskInputInterface
 {
     /**
      * @param array<int, int> $times
      * @param array<int, int> $distances
      */
     public function __construct(
-        public readonly array $times,
-        public readonly array $distances,
+        public array $times,
+        public array $distances,
     ) {}
 }

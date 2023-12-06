@@ -11,7 +11,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.2'
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
@@ -36,7 +36,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.2'
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
@@ -61,7 +61,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.2'
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
@@ -78,3 +78,28 @@ jobs:
       - name: Run PHP CS Fixer
         run: |
           vendor/bin/php-cs-fixer fix -v --dry-run --using-cache=no
+  phpstan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      - name: Composer install
+        run: |
+          composer install
+      - name: Run PHPStan
+        run: |
+          vendor/bin/phpstan analyse

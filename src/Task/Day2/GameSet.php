@@ -9,11 +9,11 @@ namespace Riimu\AdventOfCode2023\Task\Day2;
  * @copyright Copyright (c) 2023 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
-class GameSet
+readonly class GameSet
 {
     public function __construct(
-        public readonly int $red,
-        public readonly int $green,
-        public readonly int $blue,
+        public int $red,
+        public int $green,
+        public int $blue,
     ) {}
 }

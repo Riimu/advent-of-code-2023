@@ -4,23 +4,14 @@ declare(strict_types=1);
 
 namespace Riimu\AdventOfCode2023\Task\Day4;
 
-use Riimu\AdventOfCode2023\TaskInputInterface;
-use Riimu\AdventOfCode2023\TaskInterface;
-
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2023 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
- * @implements TaskInterface<Day4Input>
  */
 class Day4Part2Task extends AbstractDay4Task
 {
-    public static function createTask(): static
-    {
-        return new self();
-    }
-
-    public function solveTask(TaskInputInterface $input): string
+    protected function solve(Day4Input $input): int
     {
         $totalCards = array_fill(0, \count($input->scratchCards), 1);
 
@@ -32,6 +23,6 @@ class Day4Part2Task extends AbstractDay4Task
             }
         }
 
-        return (string) array_sum($totalCards);
+        return array_sum($totalCards);
     }
 }

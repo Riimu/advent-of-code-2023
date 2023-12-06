@@ -1,6 +1,8 @@
 #!/usr/env php
 <?php
 
+declare(strict_types=1);
+
 use Riimu\AdventOfCode2023\Application;
 
 (static function () {

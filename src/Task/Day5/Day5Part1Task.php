@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Riimu\AdventOfCode2023\Task\Day5;
 
-use Riimu\AdventOfCode2023\TaskInputInterface;
-use Riimu\AdventOfCode2023\TaskInterface;
-
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2023 Riikka Kalliomäki
@@ -14,7 +11,7 @@ use Riimu\AdventOfCode2023\TaskInterface;
  */
 class Day5Part1Task extends AbstractDay5Task
 {
-    public function solve(Day5Input $input): int
+    protected function solve(Day5Input $input): int
     {
         $locations = [];
 
