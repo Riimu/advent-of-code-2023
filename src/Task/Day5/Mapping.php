@@ -15,7 +15,5 @@ class Mapping
         public readonly int $destinationStart,
         public readonly int $sourceStart,
         public readonly int $length,
-    )
-    {
-    }
+    ) {}
 }
