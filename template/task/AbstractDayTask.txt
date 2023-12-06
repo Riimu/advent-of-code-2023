@@ -1,0 +1,39 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Riimu\AdventOfCode2023\Task\Day{{NUMBER}};
+
+use Riimu\AdventOfCode2023\TaskInputInterface;
+use Riimu\AdventOfCode2023\TaskInterface;
+
+/**
+ * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
+ * @copyright Copyright (c) 2023 Riikka Kalliomäki
+ * @license http://opensource.org/licenses/mit-license.php MIT License
+ */
+abstract class AbstractDay{{NUMBER}}Task implements TaskInterface
+{
+    final public function __construct() {}
+
+    public static function createTask(): static
+    {
+        return new static();
+    }
+
+    public function parseInput(string $input): Day{{NUMBER}}Input
+    {
+        return new Day{{NUMBER}}Input();
+    }
+
+    public function solveTask(TaskInputInterface $input): string
+    {
+        if (!$input instanceof Day{{NUMBER}}Input) {
+            throw new \InvalidArgumentException(sprintf("Unexpected input type '%s'", get_debug_type($input)));
+        }
+
+        return (string) $this->solve($input);
+    }
+
+    abstract protected function solve(Day{{NUMBER}}Input $input): int;
+}
