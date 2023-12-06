@@ -23,7 +23,7 @@ class GenerateTaskCommand extends Command
         __DIR__ . '/../template/task/DayPart2Task.txt',
     ];
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('generate-task')
@@ -56,6 +56,8 @@ class GenerateTaskCommand extends Command
         touch(__DIR__ . '/../input/' . sprintf('day-%s-sample-1.txt', $number));
 
         $output->writeln('Created task files at ' . realpath($taskDir));
+
+        return Command::SUCCESS;
     }
 
     private function renderTemplate(string $file, string $target, string $number): void

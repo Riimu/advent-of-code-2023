@@ -17,6 +17,7 @@ class Application extends \Symfony\Component\Console\Application
     {
         parent::__construct();
 
+        $this->add(new GenerateTaskCommand());
         $this->registerTaskCommands();
     }
 
