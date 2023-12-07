@@ -14,7 +14,5 @@ readonly class Hand
     public function __construct(
         public string $hand,
         public int $bid,
-    )
-    {
-    }
+    ) {}
 }

@@ -37,7 +37,4 @@ class Day7Part2Task extends AbstractDay7Task
             'A' => 'E',
         ]);
     }
-
-
-
 }
