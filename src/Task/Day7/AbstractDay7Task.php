@@ -44,5 +44,49 @@ abstract class AbstractDay7Task implements TaskInterface
         return (string) $this->solve($input);
     }
 
-    abstract protected function solve(Day7Input $input): int;
+    protected function solve(Day7Input $input): int
+    {
+        $values = [];
+
+        foreach ($input->hands as $key => $hand) {
+            $values[$key] = sprintf(
+                '%d%s',
+                $this->calculateStrength($hand->hand),
+                $this->getSortValue($hand->hand)
+            );
+        }
+
+        $order = array_keys($input->hands);
+        usort($order, static fn(int $a, int $b): int => strcasecmp($values[$a], $values[$b]));
+
+        $total = 0;
+        $rank = 1;
+
+        foreach ($order as $key) {
+            $total += $input->hands[$key]->bid * $rank++;
+        }
+
+        return $total;
+    }
+
+    private function calculateStrength(string $hand): int
+    {
+        return match ($this->countCards($hand)) {
+            [5] => 7,
+            [4, 1] => 6,
+            [3, 2] => 5,
+            [3, 1, 1] => 4,
+            [2, 2, 1] => 3,
+            [2, 1, 1, 1] => 2,
+            default => 1,
+        };
+    }
+
+    /**
+     * @param string $hand
+     * @return array<int, int>
+     */
+    abstract protected function countCards(string $hand): array;
+
+    abstract protected function getSortValue(string $hand): string;
 }
