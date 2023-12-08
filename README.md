@@ -5,7 +5,7 @@ your own peril.
 
 ## Usage
 
-The solutions aer written in PHP and requires PHP to be available on your
+The solutions are written in PHP and requires PHP to be available on your
 system to run.
 
 In order to list the implement command to run tasks, you may run:
@@ -25,7 +25,7 @@ php bin/console task:Day5Part2 input/day-5-input.txt
 
 ### Generating new task files from template
 
-To quick generate new files for a task from templates, you can use the
+To quickly generate new files for a task from the templates, you can use the
 following command
 
 ```shell
