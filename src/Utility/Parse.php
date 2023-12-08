@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riimu\AdventOfCode2023;
+namespace Riimu\AdventOfCode2023\Utility;
 
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>

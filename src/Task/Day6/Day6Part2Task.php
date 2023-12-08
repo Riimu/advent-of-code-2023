@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Riimu\AdventOfCode2023\Task\Day6;
 
-use Riimu\AdventOfCode2023\Parse;
+use Riimu\AdventOfCode2023\Utility\Parse;
 
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
