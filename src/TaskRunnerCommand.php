@@ -46,8 +46,10 @@ class TaskRunnerCommand extends Command
             throw new \UnexpectedValueException('Unexpected input file value');
         }
 
+        $timer = hrtime(true);
         $task = $this->createTask($this->taskClass);
         $output->writeln($task->solveTask($task->parseInput($this->readInput($inputFile))));
+        $output->writeln(sprintf('Total runtime: %.3f ms', (hrtime(true) - $timer) / 1e6));
 
         return Command::SUCCESS;
     }

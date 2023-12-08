@@ -36,15 +36,11 @@ abstract class AbstractDay5Task implements TaskInterface
     {
         $sections = Parse::namedSections($input);
 
-        $seeds = [];
+        $seeds = Parse::ints($sections['seeds']);
         $maps = [];
+        unset($sections['seeds']);
 
         foreach ($sections as $name => $data) {
-            if ($name === 'seeds') {
-                $seeds = Parse::ints($data);
-                continue;
-            }
-
             $rows = Parse::lines($data);
             $mappings = [];
 

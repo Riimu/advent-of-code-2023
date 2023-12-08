@@ -25,19 +25,19 @@ class Day5Part2Task extends AbstractDay5Task
             foreach ($input->maps[$name] as $mapping) {
                 $mapStart = $mapping->sourceStart;
                 $mapEnd = $mapping->sourceStart + $mapping->length - 1;
+                $unmapped = [];
 
-                foreach ($ranges as $key => [$start, $end]) {
+                foreach ($ranges as [$start, $end]) {
                     if ($mapStart > $end || $mapEnd < $start) {
+                        $unmapped[] = [$start, $end];
                         continue;
                     }
 
-                    unset($ranges[$key]);
-
                     if ($mapStart > $start) {
-                        $ranges[] = [$start, $mapStart - 1];
+                        $unmapped[] = [$start, $mapStart - 1];
                     }
                     if ($mapEnd < $end) {
-                        $ranges[] = [$mapEnd + 1, $end];
+                        $unmapped[] = [$mapEnd + 1, $end];
                     }
 
                     $newRanges[] = [
@@ -45,6 +45,8 @@ class Day5Part2Task extends AbstractDay5Task
                         $mapping->destinationStart + (min($end, $mapEnd) - $mapStart),
                     ];
                 }
+
+                $ranges = $unmapped;
             }
 
             array_push($ranges, ...$newRanges);
