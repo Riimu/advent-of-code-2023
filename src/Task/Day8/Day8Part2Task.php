@@ -13,42 +13,69 @@ class Day8Part2Task extends AbstractDay8Task
 {
     protected function solve(Day8Input $input): int
     {
-        $steps = 0;
-        $nodes = [];
+        $stepsToExit = [];
+        $length = \strlen($input->instructions);
 
-        foreach (array_keys($input->nodes) as $key) {
-            if ($key[2] === 'A') {
-                $nodes[] = $key;
-            }
-        }
+        foreach (array_keys($input->nodes) as $node) {
+            if ($node[2] === 'A') {
+                $steps = 0;
 
-        while (!$this->isFinished($nodes)) {
-            foreach (str_split($input->instructions) as $step) {
-                foreach ($nodes as $key => $node) {
-                    $nodes[$key] = $step === 'L'
+                do {
+                    $node = $input->instructions[$steps++ % $length] === 'L'
                         ? $input->nodes[$node]->left
                         : $input->nodes[$node]->right;
-                }
+                } while ($node[2] !== 'Z');
 
-                $steps++;
-
-                if ($this->isFinished($nodes)) {
-                    break;
-                }
+                $stepsToExit[] = $steps;
             }
         }
 
-        return $steps;
+        $maxFactors = [];
+
+        foreach ($stepsToExit as $steps) {
+            foreach ($this->getFactors($steps) as $factor => $count) {
+                $maxFactors[$factor] = max($count, $maxFactors[$factor] ?? 0);
+            }
+        }
+
+        $total = 1;
+
+        foreach ($maxFactors as $factor => $count) {
+            $total = $total * $factor ** $count;
+        }
+
+        return $total;
     }
 
-    private function isFinished(array $nodes): bool
+    /**
+     * @param int $number
+     * @return array<int, int>
+     */
+    private function getFactors(int $number): array
     {
-        foreach ($nodes as $node) {
-            if ($node[2] !== 'Z') {
-                return false;
+        $factors = [];
+
+        while (true) {
+            if ($number % 2 === 0) {
+                $factors[2] = ($factors[2] ?? 0) + 1;
+                $number /= 2;
+                continue;
             }
+
+            $root = sqrt($number);
+
+            for ($i = 3; $i < $root; $i += 2) {
+                if ($number % $i === 0) {
+                    $factors[$i] = ($factors[$i] ?? 0) + 1;
+                    $number /= $i;
+                    continue 2;
+                }
+            }
+
+            break;
         }
 
-        return true;
+        $factors[$number] = 1;
+        return $factors;
     }
 }

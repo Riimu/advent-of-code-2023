@@ -29,7 +29,7 @@ abstract class AbstractDay8Task implements TaskInterface
         $nodes = [];
 
         foreach ($lines as $line) {
-            if (!preg_match('/([A-Z]{3}) = \(([A-Z]{3}), ([A-Z]{3})\)/', $line, $match)) {
+            if (!preg_match('/(.{3}) = \((.{3}), (.{3})\)/', $line, $match)) {
                 continue;
             }
 
