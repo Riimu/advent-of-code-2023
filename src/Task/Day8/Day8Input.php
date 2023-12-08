@@ -13,7 +13,6 @@ use Riimu\AdventOfCode2023\TaskInputInterface;
  */
 readonly class Day8Input implements TaskInputInterface
 {
-
     /**
      * @param string $instructions
      * @param array<string, Node> $nodes
@@ -21,7 +20,5 @@ readonly class Day8Input implements TaskInputInterface
     public function __construct(
         public string $instructions,
         public array $nodes
-    ) {
-
-    }
+    ) {}
 }

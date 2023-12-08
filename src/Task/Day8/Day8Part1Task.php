@@ -13,22 +13,6 @@ class Day8Part1Task extends AbstractDay8Task
 {
     protected function solve(Day8Input $input): int
     {
-        $node = 'AAA';
-        $steps = 0;
-
-        while ($node !== 'ZZZ') {
-            foreach (str_split($input->instructions) as $step) {
-                $node = $step === 'L'
-                    ? $input->nodes[$node]->left
-                    : $input->nodes[$node]->right;
-                $steps++;
-
-                if ($node === 'ZZZ') {
-                    break;
-                }
-            }
-        }
-
-        return $steps;
+        return $this->countStepsToExit('AAA', $input->instructions, $input->nodes);
     }
 }

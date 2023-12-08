@@ -25,7 +25,7 @@ abstract class AbstractDay8Task implements TaskInterface
     public function parseInput(string $input): Day8Input
     {
         $lines = Parse::lines($input);
-        $instructions = array_shift($lines);
+        $instructions = array_shift($lines) ?? '';
         $nodes = [];
 
         foreach ($lines as $line) {
@@ -49,4 +49,25 @@ abstract class AbstractDay8Task implements TaskInterface
     }
 
     abstract protected function solve(Day8Input $input): int;
+
+    /**
+     * @param string $node
+     * @param string $instructions
+     * @param array<string, Node> $map
+     * @return int
+     */
+    protected function countStepsToExit(string $node, string $instructions, array $map): int
+    {
+        $steps = 0;
+        $length = \strlen($instructions);
+
+        while ($node[2] !== 'Z') {
+            $node = $instructions[$steps % $length] === 'L'
+                ? $map[$node]->left
+                : $map[$node]->right;
+            $steps++;
+        }
+
+        return $steps;
+    }
 }

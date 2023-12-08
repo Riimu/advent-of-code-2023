@@ -14,7 +14,5 @@ readonly class Node
     public function __construct(
         public string $left,
         public string $right,
-    )
-    {
-    }
+    ) {}
 }
