@@ -82,6 +82,9 @@ class TaskResultTest extends TestCase
             [Task\Day8\Day8Part1Task::class, __DIR__ . '/../../input/day-8-input.txt', '20777'],
             [Task\Day8\Day8Part2Task::class, __DIR__ . '/../../input/day-8-sample-3.txt', '6'],
             [Task\Day8\Day8Part2Task::class, __DIR__ . '/../../input/day-8-input.txt', '13289612809129'],
+
+            [Task\Day9\Day9Part1Task::class, __DIR__ . '/../../input/day-9-sample-1.txt', '114'],
+            [Task\Day9\Day9Part1Task::class, __DIR__ . '/../../input/day-9-input.txt', '2043183816'],
         ];
     }
 }

@@ -5,10 +5,10 @@ your own peril.
 
 ## Usage
 
-The solutions are written in PHP and requires PHP to be available on your
+The solutions are written in PHP and require PHP to be available on your
 system to run.
 
-In order to list the implement command to run tasks, you may run:
+In order to list all the implemented task commands, you may run:
 
 ```shell
 php bin/console list

@@ -62,7 +62,7 @@ class Parse
      */
     public static function ints(string $input): array
     {
-        preg_match_all('/\d+/', $input, $match);
+        preg_match_all('/-?\d+/', $input, $match);
         return array_map(self::int(...), $match[0]);
     }
 }
