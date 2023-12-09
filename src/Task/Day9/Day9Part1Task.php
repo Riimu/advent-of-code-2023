@@ -11,35 +11,14 @@ namespace Riimu\AdventOfCode2023\Task\Day9;
  */
 class Day9Part1Task extends AbstractDay9Task
 {
-    protected function solve(Day9Input $input): int
+    protected function calculateExtrapolatedValue(array $changes): int
     {
-        $extrapolated = [];
+        $next = 0;
 
-        foreach ($input->histories as $history) {
-            $changes = [$history];
-
-            while (array_unique($history) !== [0]) {
-                $previous = $history;
-                $history = [];
-
-                $count = \count($previous);
-
-                for ($i = 1; $i < $count; $i++) {
-                    $history[] = $previous[$i] - $previous[$i - 1];
-                }
-
-                $changes[] = $history;
-            }
-
-            $next = 0;
-
-            for ($i = \count($changes) - 1; $i > 0; $i--) {
-                $next = $changes[$i - 1][array_key_last($changes[$i - 1])] + $next;
-            }
-
-            $extrapolated[] = $next;
+        for ($i = \count($changes) - 1; $i > 0; $i--) {
+            $next += $changes[$i - 1][array_key_last($changes[$i - 1])];
         }
 
-        return array_sum($extrapolated);
+        return $next;
     }
 }

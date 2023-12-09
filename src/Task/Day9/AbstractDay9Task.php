@@ -36,5 +36,35 @@ abstract class AbstractDay9Task implements TaskInterface
         return (string) $this->solve($input);
     }
 
-    abstract protected function solve(Day9Input $input): int;
+    protected function solve(Day9Input $input): int
+    {
+        $extrapolated = [];
+
+        foreach ($input->histories as $history) {
+            $changes = [$history];
+
+            while (array_unique($history) !== [0]) {
+                $previous = $history;
+                $history = [];
+
+                $count = \count($previous);
+
+                for ($i = 1; $i < $count; $i++) {
+                    $history[] = $previous[$i] - $previous[$i - 1];
+                }
+
+                $changes[] = $history;
+            }
+
+            $extrapolated[] = static::calculateExtrapolatedValue($changes);
+        }
+
+        return array_sum($extrapolated);
+    }
+
+    /**
+     * @param array<int, array<int, int>> $changes
+     * @return int
+     */
+    abstract protected function calculateExtrapolatedValue(array $changes): int;
 }
