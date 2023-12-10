@@ -37,4 +37,141 @@ abstract class AbstractDay10Task implements TaskInterface
     }
 
     abstract protected function solve(Day10Input $input): int;
+
+    /**
+     * @param array<int, array<int, string>> $map
+     * @return array<int, array<int, array<int, int>>>
+     */
+    protected function findValidPipes(array $map): array
+    {
+        [$startX, $startY] = $this->find($map, 'S');
+        $pipes = [];
+
+        foreach (Direction::cases() as $direction) {
+            [$x, $y] = $this->moveDirection($startX, $startY, $direction);
+
+            if ($this->isValidDirection($map, $x, $y, $direction)) {
+                $pipes[] = $this->traverse($map, $startX, $startY, $direction);
+            }
+        }
+
+        return $pipes;
+    }
+
+    /**
+     * @param array<int, array<int, string>> $map
+     * @param string $search
+     * @return array<int, int>
+     */
+    protected function find(array $map, string $search): array
+    {
+        foreach ($map as $y => $row) {
+            foreach ($row as $x => $node) {
+                if ($node === $search) {
+                    return [$x, $y];
+                }
+            }
+        }
+
+        return [0, 0];
+    }
+
+    /**
+     * @param array<int, array<int, string>> $map
+     * @param int $x
+     * @param int $y
+     * @param Direction $direction
+     * @return array<int, array<int, int>>
+     */
+    protected function traverse(array $map, int $x, int $y, Direction $direction): array
+    {
+        $startX = $x;
+        $startY = $y;
+        $route = [];
+
+        do {
+            $route[] = [$x, $y];
+            [$x, $y] = $this->moveDirection($x, $y, $direction);
+            $direction = $this->getNextDirection($map, $x, $y, $direction);
+        } while ($x !== $startX || $y !== $startY);
+
+        return $route;
+    }
+
+    /**
+     * @param int $x
+     * @param int $y
+     * @param Direction $direction
+     * @return array<int, int>
+     */
+    protected function moveDirection(int $x, int $y, Direction $direction): array
+    {
+        return match ($direction) {
+            Direction::LEFT => [$x - 1, $y],
+            Direction::RIGHT => [$x + 1, $y],
+            Direction::UP => [$x, $y - 1],
+            Direction::DOWN => [$x, $y + 1],
+        };
+    }
+
+    /**
+     * @param array<int, array<int, string>> $map
+     * @param int $x
+     * @param int $y
+     * @param Direction $direction
+     * @return bool
+     */
+    protected function isValidDirection(array $map, int $x, int $y, Direction $direction): bool
+    {
+        if (!isset($map[$y][$x])) {
+            return false;
+        }
+
+        if ($map[$y][$x] === 'S') {
+            return true;
+        }
+
+        return match($direction) {
+            Direction::LEFT => \in_array($map[$y][$x], ['F', 'L', '-'], true),
+            Direction::RIGHT => \in_array($map[$y][$x], ['7', 'J', '-'], true),
+            Direction::UP => \in_array($map[$y][$x], ['7', 'F', '|'], true),
+            Direction::DOWN => \in_array($map[$y][$x], ['L', 'J', '|'], true),
+        };
+    }
+
+    /**
+     * @param array<int, array<int, string>> $map
+     * @param int $x
+     * @param int $y
+     * @param Direction $direction
+     * @return Direction
+     */
+    protected function getNextDirection(array $map, int $x, int $y, Direction $direction): Direction
+    {
+        if ($map[$y][$x] === 'S') {
+            if ($direction !== Direction::RIGHT && $this->isValidDirection($map, $x - 1, $y, Direction::LEFT)) {
+                return Direction::LEFT;
+            }
+
+            if ($direction !== Direction::LEFT && $this->isValidDirection($map, $x + 1, $y, Direction::RIGHT)) {
+                return Direction::RIGHT;
+            }
+
+            if ($direction !== Direction::DOWN && $this->isValidDirection($map, $x, $y - 1, Direction::UP)) {
+                return Direction::UP;
+            }
+
+            if ($direction !== Direction::UP && $this->isValidDirection($map, $x, $y + 1, Direction::DOWN)) {
+                return Direction::DOWN;
+            }
+        }
+
+        return match ($map[$y][$x]) {
+            'F' => $direction === Direction::LEFT ? Direction::DOWN : Direction::RIGHT,
+            'L' => $direction === Direction::LEFT ? Direction::UP : Direction::RIGHT,
+            '7' => $direction === Direction::RIGHT ? Direction::DOWN : Direction::LEFT,
+            'J' => $direction === Direction::RIGHT ? Direction::UP : Direction::LEFT,
+            default => $direction,
+        };
+    }
 }
