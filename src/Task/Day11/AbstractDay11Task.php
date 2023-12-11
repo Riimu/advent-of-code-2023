@@ -37,4 +37,39 @@ abstract class AbstractDay11Task implements TaskInterface
     }
 
     abstract protected function solve(Day11Input $input): int;
+
+    /**
+     * @param array<int, array<int, string>> $map
+     * @param int $expansion
+     * @return array<int, int>
+     */
+    protected function calculateLengths(array $map, int $expansion): array
+    {
+        $columnLengths = array_fill(0, \count($map[0]), $expansion);
+        $rowLengths = array_fill(0, \count($map), $expansion);
+        $stars = [];
+
+        foreach ($map as $y => $row) {
+            foreach ($row as $x => $node) {
+                if ($node === '#') {
+                    $stars[] = [$x, $y];
+                    $columnLengths[$x] = 1;
+                    $rowLengths[$y] = 1;
+                }
+            }
+        }
+
+        $count = \count($stars);
+        $lengths = [];
+
+        foreach ($stars as $index => [$x, $y]) {
+            for ($i = $index + 1; $i < $count; $i++) {
+                $lengths[] =
+                    array_sum(\array_slice($columnLengths, min($x, $stars[$i][0]) + 1, abs($stars[$i][0] - $x))) +
+                    array_sum(\array_slice($rowLengths, min($y, $stars[$i][1]) + 1, abs($stars[$i][1] - $y)));
+            }
+        }
+
+        return $lengths;
+    }
 }
