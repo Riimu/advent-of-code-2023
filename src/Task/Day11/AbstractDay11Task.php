@@ -65,8 +65,8 @@ abstract class AbstractDay11Task implements TaskInterface
         foreach ($stars as $index => [$x, $y]) {
             for ($i = $index + 1; $i < $count; $i++) {
                 $lengths[] =
-                    array_sum(\array_slice($columnLengths, min($x, $stars[$i][0]) + 1, abs($stars[$i][0] - $x))) +
-                    array_sum(\array_slice($rowLengths, min($y, $stars[$i][1]) + 1, abs($stars[$i][1] - $y)));
+                    array_sum(\array_slice($columnLengths, min($x, $stars[$i][0]), abs($stars[$i][0] - $x))) +
+                    array_sum(\array_slice($rowLengths, min($y, $stars[$i][1]), abs($stars[$i][1] - $y)));
             }
         }
 
