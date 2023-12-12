@@ -18,7 +18,5 @@ readonly class Record
     public function __construct(
         public string $condition,
         public array $groups,
-    )
-    {
-    }
+    ) {}
 }

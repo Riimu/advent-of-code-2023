@@ -15,6 +15,11 @@ use Riimu\AdventOfCode2023\Utility\Parse;
  */
 abstract class AbstractDay12Task implements TaskInterface
 {
+    /**
+     * @var array<string, int>
+     */
+    private array $cache = [];
+
     final public function __construct() {}
 
     public static function createTask(): static
@@ -44,4 +49,47 @@ abstract class AbstractDay12Task implements TaskInterface
     }
 
     abstract protected function solve(Day12Input $input): int;
+
+    /**
+     * @param string $condition
+     * @param array<int, int> $groups
+     * @return int
+     */
+    protected function tryArrangements(string $condition, array $groups): int
+    {
+        $condition = trim($condition, '.');
+
+        if ($groups === []) {
+            return str_contains($condition, '#') ? 0 : 1;
+        }
+
+        if (\strlen($condition) < array_sum($groups) + \count($groups) - 1) {
+            return 0;
+        }
+
+        $cacheKey = sprintf('%s %s', $condition, implode(',', $groups));
+
+        if (\array_key_exists($cacheKey, $this->cache)) {
+            return $this->cache[$cacheKey];
+        }
+
+        $arrangements = 0;
+        $groupLength = array_shift($groups);
+        $pattern = sprintf('/^([.?]*)[#?]{%d}($|[?.])/U', $groupLength);
+
+        while (preg_match($pattern, $condition, $match) === 1) {
+            $position = \strlen($match[1]);
+            $arrangements += $this->tryArrangements(substr($condition, $position + $groupLength + 1), $groups);
+
+            if ($condition[$position] === '#') {
+                break;
+            }
+
+            $condition = substr_replace($condition, str_repeat('.', $position + 1), 0, $position + 1);
+        }
+
+        $this->cache[$cacheKey] = $arrangements;
+
+        return $arrangements;
+    }
 }
