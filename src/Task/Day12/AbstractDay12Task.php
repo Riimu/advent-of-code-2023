@@ -57,11 +57,11 @@ abstract class AbstractDay12Task implements TaskInterface
      */
     protected function tryArrangements(string $condition, array $groups): int
     {
-        $condition = trim($condition, '.');
-
         if ($groups === []) {
             return str_contains($condition, '#') ? 0 : 1;
         }
+
+        $condition = trim($condition, '.');
 
         if (\strlen($condition) < array_sum($groups) + \count($groups) - 1) {
             return 0;
@@ -85,7 +85,7 @@ abstract class AbstractDay12Task implements TaskInterface
                 break;
             }
 
-            $condition = substr_replace($condition, str_repeat('.', $position + 1), 0, $position + 1);
+            $condition = substr($condition, $position + 1);
         }
 
         $this->cache[$cacheKey] = $arrangements;
