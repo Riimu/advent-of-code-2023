@@ -28,6 +28,21 @@ class Parse
 
     /**
      * @param string $input
+     * @return array<int, string>
+     */
+    public static function sections(string $input): array
+    {
+        $sections = preg_split('/(\r\n|\r(?!\n)|(?<!\r)\n){2}/', trim($input), 0, PREG_SPLIT_NO_EMPTY);
+
+        if (!\is_array($sections)) {
+            throw new \UnexpectedValueException('Unexpected value returned from preg_split');
+        }
+
+        return $sections;
+    }
+
+    /**
+     * @param string $input
      * @return array<string, string>
      */
     public static function namedSections(string $input): array
