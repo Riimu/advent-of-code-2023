@@ -24,12 +24,12 @@ class Day14Part2Task extends AbstractDay14Task
         $emptyReverserHeight = array_reverse($emptyHeight, true);
         $emptyWidth = array_fill(0, $width, []);
         $emptyReverseWidth = array_reverse($emptyWidth, true);
-        $rocks = $emptyHeight;
+        $nextRocks = $emptyHeight;
 
         foreach ($input->map as $y => $row) {
             foreach ($row as $x => $node) {
                 if ($node === self::TYPE_ROCK) {
-                    $rocks[$y][$x] = true;
+                    $nextRocks[$y][] = $x;
                 }
             }
         }
@@ -41,16 +41,11 @@ class Day14Part2Task extends AbstractDay14Task
         $totalIterations = 1_000_000_000;
 
         for ($i = 0; $i < $totalIterations; $i++) {
+            $rocks = $nextRocks;
             $nextRocks = $emptyWidth;
 
-            foreach ($rocks[0] as $x => $_) {
-                $nextRocks[$x][0] = true;
-            }
-
-            unset($rocks[0]);
-
             foreach ($rocks as $y => $row) {
-                foreach ($row as $x => $_) {
+                foreach ($row as $x) {
                     $next = $y;
 
                     while ($next > 0 && $tilted[$next - 1][$x] === self::TYPE_EMPTY) {
@@ -62,21 +57,15 @@ class Day14Part2Task extends AbstractDay14Task
                         $tilted[$next][$x] = self::TYPE_ROCK;
                     }
 
-                    $nextRocks[$x][$next] = true;
+                    $nextRocks[$x][] = $next;
                 }
             }
 
             $rocks = $nextRocks;
             $nextRocks = $emptyReverserHeight;
 
-            foreach ($rocks[0] as $y => $_) {
-                $nextRocks[$y][0] = true;
-            }
-
-            unset($rocks[0]);
-
             foreach ($rocks as $x => $column) {
-                foreach ($column as $y => $_) {
+                foreach ($column as $y) {
                     $next = $x;
 
                     while ($next > 0 && $tilted[$y][$next - 1] === self::TYPE_EMPTY) {
@@ -88,21 +77,15 @@ class Day14Part2Task extends AbstractDay14Task
                         $tilted[$y][$next] = self::TYPE_ROCK;
                     }
 
-                    $nextRocks[$y][$next] = true;
+                    $nextRocks[$y][] = $next;
                 }
             }
 
             $rocks = $nextRocks;
             $nextRocks = $emptyReverseWidth;
 
-            foreach ($rocks[$height - 1] as $x => $_) {
-                $nextRocks[$x][$height - 1] = true;
-            }
-
-            unset($rocks[$height - 1]);
-
             foreach ($rocks as $y => $row) {
-                foreach ($row as $x => $_) {
+                foreach ($row as $x) {
                     $next = $y;
 
                     while ($next < $height - 1 && $tilted[$next + 1][$x] === self::TYPE_EMPTY) {
@@ -114,21 +97,15 @@ class Day14Part2Task extends AbstractDay14Task
                         $tilted[$next][$x] = self::TYPE_ROCK;
                     }
 
-                    $nextRocks[$x][$next] = true;
+                    $nextRocks[$x][] = $next;
                 }
             }
 
             $rocks = $nextRocks;
             $nextRocks = $emptyHeight;
 
-            foreach ($rocks[$width - 1] as $y => $_) {
-                $nextRocks[$y][$width - 1] = true;
-            }
-
-            unset($rocks[$width - 1]);
-
             foreach ($rocks as $x => $column) {
-                foreach ($column as $y => $_) {
+                foreach ($column as $y) {
                     $next = $x;
 
                     while ($next < $width - 1 && $tilted[$y][$next + 1] === self::TYPE_EMPTY) {
@@ -140,16 +117,15 @@ class Day14Part2Task extends AbstractDay14Task
                         $tilted[$y][$next] = self::TYPE_ROCK;
                     }
 
-                    $nextRocks[$y][$next] = true;
+                    $nextRocks[$y][] = $next;
                 }
             }
 
-            $rocks = $nextRocks;
             $positions = [];
 
             for ($y = 0; $y < $height; $y++) {
                 for ($x = 0; $x < $width; $x++) {
-                    if (\array_key_exists($x, $nextRocks[$y])) {
+                    if ($tilted[$y][$x] === self::TYPE_ROCK) {
                         $positions[] = sprintf('%d,%d', $x, $y);
                     }
                 }
@@ -159,11 +135,11 @@ class Day14Part2Task extends AbstractDay14Task
 
             if (\array_key_exists($positionKey, $previousPositions)) {
                 $lastIteration = $i;
-                $foundPosition = array_search($positionKey, array_keys($previousPositions), true);
+                $foundPosition = $previousPositions[$positionKey];
                 break;
             }
 
-            $previousPositions[$positionKey] = true;
+            $previousPositions[$positionKey] = \count($previousPositions);
         }
 
         $remainingIterations = $totalIterations - $lastIteration - 1;
