@@ -13,21 +13,6 @@ class Day15Part1Task extends AbstractDay15Task
 {
     protected function solve(Day15Input $input): int
     {
-        $hashValues = [];
-
-        foreach ($input->operations as $operation) {
-            $currentValue = 0;
-            $length = \strlen($operation);
-
-            for ($i = 0; $i < $length; $i++) {
-                $currentValue += \ord($operation[$i]);
-                $currentValue *= 17;
-                $currentValue %= 256;
-            }
-
-            $hashValues[] = $currentValue;
-        }
-
-        return array_sum($hashValues);
+        return array_sum(array_map($this->calculateHash(...), $input->operations));
     }
 }

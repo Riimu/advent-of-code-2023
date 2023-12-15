@@ -36,4 +36,18 @@ abstract class AbstractDay15Task implements TaskInterface
     }
 
     abstract protected function solve(Day15Input $input): int;
+
+    protected function calculateHash(string $string): int
+    {
+        $currentValue = 0;
+        $length = \strlen($string);
+
+        for ($i = 0; $i < $length; $i++) {
+            $currentValue += \ord($string[$i]);
+            $currentValue *= 17;
+            $currentValue %= 256;
+        }
+
+        return $currentValue;
+    }
 }
