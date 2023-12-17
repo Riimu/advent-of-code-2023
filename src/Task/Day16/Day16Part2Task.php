@@ -19,20 +19,25 @@ class Day16Part2Task extends AbstractDay16Task
         $height = \count($input->map);
         $width = \count($input->map[0]);
 
+        $visitedExits = [];
+        $entryPoints = [];
+
         for ($i = 0; $i < $height; $i++) {
-            $maximum = max(
-                $maximum,
-                $this->countEnergized($input->map, 0, $i, Direction::RIGHT),
-                $this->countEnergized($input->map, $width - 1, $i, Direction::LEFT)
-            );
+            $entryPoints[] = [0, $i, Direction::RIGHT];
+            $entryPoints[] = [$width - 1, $i, Direction::LEFT];
         }
 
         for ($i = 0; $i < $width; $i++) {
-            $maximum = max(
-                $maximum,
-                $this->countEnergized($input->map, $i, 0, Direction::DOWN),
-                $this->countEnergized($input->map, $i, $height - 1, Direction::UP)
-            );
+            $entryPoints[] = [$i, 0, Direction::DOWN];
+            $entryPoints[] = [$i, $height - 1, Direction::UP];
+        }
+
+        foreach ($entryPoints as [$x, $y, $direction]) {
+            if (isset($visitedExits[$y][$x][$direction->value])) {
+                continue;
+            }
+
+            $maximum = max($maximum, $this->countEnergized($input->map, $x, $y, $direction, $visitedExits));
         }
 
         return $maximum;
