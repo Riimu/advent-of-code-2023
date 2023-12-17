@@ -53,7 +53,7 @@ abstract class AbstractDay17Task implements TaskInterface
         $queue->insert(new TravelNode(1, 0, $input->map[0][1], Direction::RIGHT, 1), $distance + $input->map[0][1]);
         $queue->insert(new TravelNode(0, 1, $input->map[1][0], Direction::DOWN, 1), $distance + $input->map[1][0]);
 
-        $minimumLossMap = [];
+        $visitedNodes = new VisitedNodeCache();
 
         while (true) {
             $node = $queue->extract();
@@ -66,23 +66,25 @@ abstract class AbstractDay17Task implements TaskInterface
                 [$x, $y] = $direction->moveCoordinate($node->x, $node->y);
 
                 if (isset($input->map[$y][$x])) {
-                    $steps = $direction === $node->direction ? $node->steps + 1 : 1;
-                    $heatLoss = $node->heatLoss + $input->map[$y][$x];
-                    $lossMapKey = sprintf('%d-%d-%d-%d', $x, $y, $direction->value, $steps);
+                    $newNode = new TravelNode(
+                        $x,
+                        $y,
+                        $node->heatLoss + $input->map[$y][$x],
+                        $direction,
+                        $direction === $node->direction ? $node->steps + 1 : 1
+                    );
 
-                    if (isset($minimumLossMap[$lossMapKey]) && $heatLoss >= $minimumLossMap[$lossMapKey]) {
+                    if ($this->isVisited($newNode, $visitedNodes)) {
                         continue;
                     }
 
-                    $minimumLossMap[$lossMapKey] = $heatLoss;
                     $distance = ($width - $x - 1) + ($height - $y - 1);
-                    $newNode = new TravelNode($x, $y, $heatLoss, $direction, $steps);
 
                     if ($this->isFinished($newNode, $distance)) {
-                        return $heatLoss;
+                        return $newNode->heatLoss;
                     }
 
-                    $queue->insert($newNode, $heatLoss + $distance);
+                    $queue->insert($newNode, $newNode->heatLoss + $distance);
                 }
             }
         }
@@ -93,6 +95,8 @@ abstract class AbstractDay17Task implements TaskInterface
      * @return array<int, Direction>
      */
     abstract protected function getDirections(TravelNode $node): array;
+
+    abstract protected function isVisited(TravelNode $node, VisitedNodeCache $visitedNodes): bool;
 
     abstract protected function isFinished(TravelNode $node, int $distance): bool;
 }

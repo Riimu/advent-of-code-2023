@@ -18,6 +18,21 @@ class Day17Part1Task extends AbstractDay17Task
             : [$node->direction, $node->direction->turnLeft(), $node->direction->turnRight()];
     }
 
+    protected function isVisited(TravelNode $node, VisitedNodeCache $visitedNodes): bool
+    {
+        if (isset($visitedNodes->nodes[$node->y][$node->x][$node->direction->value])) {
+            foreach ($visitedNodes->nodes[$node->y][$node->x][$node->direction->value] as $steps => $heatLoss) {
+                if ($heatLoss <= $node->heatLoss && $steps <= $node->steps) {
+                    return true;
+                }
+            }
+        }
+
+        $visitedNodes->nodes[$node->y][$node->x][$node->direction->value][$node->steps] = $node->heatLoss;
+
+        return false;
+    }
+
     protected function isFinished(TravelNode $node, int $distance): bool
     {
         return $distance === 0;
