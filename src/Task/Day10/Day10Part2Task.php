@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Riimu\AdventOfCode2023\Task\Day10;
 
+use Riimu\AdventOfCode2023\Utility\Direction;
+
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2023 Riikka Kalliomäki

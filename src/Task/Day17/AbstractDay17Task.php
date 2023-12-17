@@ -63,7 +63,7 @@ abstract class AbstractDay17Task implements TaskInterface
             }
 
             foreach ($this->getDirections($node) as $direction) {
-                [$x, $y] = $direction->moveCoordinate($node->x, $node->y);
+                [$x, $y] = $direction->moveCoordinates($node->x, $node->y);
 
                 if (isset($input->map[$y][$x])) {
                     $newNode = new TravelNode(

@@ -36,7 +36,7 @@ enum Direction: int
      * @param int $y
      * @return array{0: int, 1: int}
      */
-    public function moveCoordinate(int $x, int $y): array
+    public function moveCoordinates(int $x, int $y): array
     {
         return match ($this) {
             self::LEFT => [$x - 1, $y],

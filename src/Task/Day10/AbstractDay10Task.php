@@ -6,6 +6,7 @@ namespace Riimu\AdventOfCode2023\Task\Day10;
 
 use Riimu\AdventOfCode2023\TaskInputInterface;
 use Riimu\AdventOfCode2023\TaskInterface;
+use Riimu\AdventOfCode2023\Utility\Direction;
 use Riimu\AdventOfCode2023\Utility\Parse;
 
 /**
