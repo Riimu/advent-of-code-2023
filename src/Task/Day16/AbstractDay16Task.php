@@ -50,25 +50,27 @@ abstract class AbstractDay16Task implements TaskInterface
     protected function countEnergized(array $map, int $startX, int $startY, Direction $startDirection, array &$visitedExits = []): int
     {
         $beams = [[$startX, $startY, $startDirection]];
-        $moveDirections = [];
+        $movedDirections = [];
 
         do {
             $newBeams = [];
 
             foreach ($beams as [$x, $y, $direction]) {
-                $beamAlignment = match ($map[$y][$x]) {
+                $mapNode = $map[$y][$x];
+
+                $beamAlignment = match ($mapNode) {
                     Day16Input::NODE_FORWARD_MIRROR => $direction === Direction::LEFT || $direction === Direction::UP ? 0 : 1,
                     Day16Input::NODE_BACKWARD_MIRROR => $direction === Direction::LEFT || $direction === Direction::DOWN ? 0 : 1,
                     default => $direction === Direction::LEFT || $direction === Direction::RIGHT ? 0 : 1,
                 };
 
-                if (isset($moveDirections[$y][$x][$beamAlignment])) {
+                if (isset($movedDirections[$y][$x][$beamAlignment])) {
                     continue;
                 }
 
-                $moveDirections[$y][$x][$beamAlignment] = true;
+                $movedDirections[$y][$x][$beamAlignment] = true;
 
-                foreach ($this->moveBeam($map, $x, $y, $direction) as [$newX, $newY, $newDirection]) {
+                foreach ($this->moveBeam($mapNode, $x, $y, $direction) as [$newX, $newY, $newDirection]) {
                     if (!isset($map[$newY][$newX])) {
                         $exitDirection = $newDirection->turnAround();
                         [$exitX, $exitY] = $exitDirection->moveCoordinates($newX, $newY);
@@ -84,56 +86,42 @@ abstract class AbstractDay16Task implements TaskInterface
             $beams = $newBeams;
         } while ($beams !== []);
 
-        return array_sum(array_map(\count(...), $moveDirections));
+        return array_sum(array_map(\count(...), $movedDirections));
     }
 
     /**
-     * @param array<int, array<int, string>> $map
+     * @param string $mapNode
      * @param int $x
      * @param int $y
      * @param Direction $direction
      * @return array<int, array{0: int, 1: int, 2: Direction}>
      */
-    protected function moveBeam(array $map, int $x, int $y, Direction $direction): array
+    protected function moveBeam(string $mapNode, int $x, int $y, Direction $direction): array
     {
-        return match ($map[$y][$x]) {
+        $directions = match ($mapNode) {
             Day16Input::NODE_FORWARD_MIRROR => match ($direction) {
-                Direction::LEFT => $this->moveDirections($x, $y, [Direction::DOWN]),
-                Direction::RIGHT => $this->moveDirections($x, $y, [Direction::UP]),
-                Direction::UP => $this->moveDirections($x, $y, [Direction::RIGHT]),
-                Direction::DOWN => $this->moveDirections($x, $y, [Direction::LEFT]),
+                Direction::LEFT, Direction::RIGHT => [$direction->turnLeft()],
+                default => [$direction->turnRight()],
             },
             Day16Input::NODE_BACKWARD_MIRROR => match ($direction) {
-                Direction::LEFT => $this->moveDirections($x, $y, [Direction::UP]),
-                Direction::RIGHT => $this->moveDirections($x, $y, [Direction::DOWN]),
-                Direction::UP => $this->moveDirections($x, $y, [Direction::LEFT]),
-                Direction::DOWN => $this->moveDirections($x, $y, [Direction::RIGHT]),
+                Direction::LEFT, Direction::RIGHT => [$direction->turnRight()],
+                default => [$direction->turnLeft()],
             },
             Day16Input::NODE_VERTICAL_SPLITTER => match ($direction) {
-                Direction::LEFT, Direction::RIGHT => $this->moveDirections($x, $y, [Direction::UP, Direction::DOWN]),
-                Direction::UP, Direction::DOWN => $this->moveDirections($x, $y, [$direction]),
+                Direction::LEFT, Direction::RIGHT => [Direction::UP, Direction::DOWN],
+                default => [$direction],
             },
             Day16Input::NODE_HORIZONTAL_SPLITTER => match ($direction) {
-                Direction::LEFT, Direction::RIGHT => $this->moveDirections($x, $y, [$direction]),
-                Direction::UP, Direction::DOWN => $this->moveDirections($x, $y, [Direction::LEFT, Direction::RIGHT]),
+                Direction::LEFT, Direction::RIGHT => [$direction],
+                default => [Direction::LEFT, Direction::RIGHT],
             },
-            default => $this->moveDirections($x, $y, [$direction]),
+            default => [$direction],
         };
-    }
 
-    /**
-     * @param int $x
-     * @param int $y
-     * @param array<int, Direction> $directions
-     * @return array<int, array{0: int, 1: int, 2: Direction}>
-     */
-    protected function moveDirections(int $x, int $y, array $directions): array
-    {
         $beams = [];
 
-        foreach ($directions as $direction) {
-            [$newX, $newY] = $direction->moveCoordinates($x, $y);
-            $beams[] = [$newX, $newY, $direction];
+        foreach ($directions as $newDirection) {
+            $beams[] = [...$newDirection->moveCoordinates($x, $y), $newDirection];
         }
 
         return $beams;
