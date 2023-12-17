@@ -41,6 +41,36 @@ abstract class AbstractDay16Task implements TaskInterface
 
     /**
      * @param array<int, array<int, string>> $map
+     * @param int $startX
+     * @param int $startY
+     * @param Direction $startDirection
+     * @return int
+     */
+    protected function countEnergized(array $map, int $startX, int $startY, Direction $startDirection): int
+    {
+        $beams = [[$startX, $startY, $startDirection]];
+        $moveDirections = [];
+
+        do {
+            $newBeams = [];
+
+            foreach ($beams as [$x, $y, $direction]) {
+                if (isset($moveDirections[$y][$x][$direction->value])) {
+                    continue;
+                }
+
+                $moveDirections[$y][$x][$direction->value] = true;
+                array_push($newBeams, ...$this->moveBeam($map, $x, $y, $direction));
+            }
+
+            $beams = $newBeams;
+        } while ($beams !== []);
+
+        return array_sum(array_map(\count(...), $moveDirections));
+    }
+
+    /**
+     * @param array<int, array<int, string>> $map
      * @param int $x
      * @param int $y
      * @param Direction $direction

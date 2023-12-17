@@ -37,34 +37,4 @@ class Day16Part2Task extends AbstractDay16Task
 
         return $maximum;
     }
-
-    /**
-     * @param array<int, array<int, string>> $map
-     * @param int $startX
-     * @param int $startY
-     * @param Direction $startDirection
-     * @return int
-     */
-    private function countEnergized(array $map, int $startX, int $startY, Direction $startDirection): int
-    {
-        $beams = [[$startX, $startY, $startDirection]];
-        $moveDirections = [];
-
-        do {
-            $newBeams = [];
-
-            foreach ($beams as [$x, $y, $direction]) {
-                if (isset($moveDirections[$y][$x][$direction->value])) {
-                    continue;
-                }
-
-                $moveDirections[$y][$x][$direction->value] = true;
-                array_push($newBeams, ...$this->moveBeam($map, $x, $y, $direction));
-            }
-
-            $beams = $newBeams;
-        } while ($beams !== []);
-
-        return array_sum(array_map(\count(...), $moveDirections));
-    }
 }
