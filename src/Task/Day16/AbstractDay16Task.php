@@ -50,7 +50,7 @@ abstract class AbstractDay16Task implements TaskInterface
     protected function countEnergized(array $map, int $startX, int $startY, Direction $startDirection, array &$visitedExits = []): int
     {
         $beams = [[$startX, $startY, $startDirection]];
-        $movedDirections = [];
+        $movedDirections = array_fill(0, \count($map), array_fill(0, \count($map[0]), 0));
 
         do {
             $newBeams = [];
@@ -59,16 +59,16 @@ abstract class AbstractDay16Task implements TaskInterface
                 $mapNode = $map[$y][$x];
 
                 $beamAlignment = match ($mapNode) {
-                    Day16Input::NODE_FORWARD_MIRROR => $direction === Direction::LEFT || $direction === Direction::UP ? 0 : 1,
-                    Day16Input::NODE_BACKWARD_MIRROR => $direction === Direction::LEFT || $direction === Direction::DOWN ? 0 : 1,
-                    default => $direction === Direction::LEFT || $direction === Direction::RIGHT ? 0 : 1,
+                    Day16Input::NODE_FORWARD_MIRROR => $direction === Direction::LEFT || $direction === Direction::UP ? 0b01 : 0b10,
+                    Day16Input::NODE_BACKWARD_MIRROR => $direction === Direction::LEFT || $direction === Direction::DOWN ? 0b01 : 0b10,
+                    default => $direction === Direction::LEFT || $direction === Direction::RIGHT ? 0b01 : 0b10,
                 };
 
-                if (isset($movedDirections[$y][$x][$beamAlignment])) {
+                if ($movedDirections[$y][$x] & $beamAlignment) {
                     continue;
                 }
 
-                $movedDirections[$y][$x][$beamAlignment] = true;
+                $movedDirections[$y][$x] |= $beamAlignment;
 
                 foreach ($this->moveBeam($mapNode, $x, $y, $direction) as [$newX, $newY, $newDirection]) {
                     if (!isset($map[$newY][$newX])) {
@@ -86,7 +86,10 @@ abstract class AbstractDay16Task implements TaskInterface
             $beams = $newBeams;
         } while ($beams !== []);
 
-        return array_sum(array_map(\count(...), $movedDirections));
+        return array_sum(array_map(
+            static fn(array $x) => \count(array_filter($x)),
+            $movedDirections
+        ));
     }
 
     /**
