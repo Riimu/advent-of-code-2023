@@ -55,11 +55,17 @@ abstract class AbstractDay16Task implements TaskInterface
             $newBeams = [];
 
             foreach ($beams as [$x, $y, $direction]) {
-                if (isset($moveDirections[$y][$x][$direction->value])) {
+                $beamAlignment = match ($map[$y][$x]) {
+                    Day16Input::NODE_FORWARD_MIRROR => $direction === Direction::LEFT || $direction === Direction::UP ? 0 : 1,
+                    Day16Input::NODE_BACKWARD_MIRROR => $direction === Direction::LEFT || $direction === Direction::DOWN ? 0 : 1,
+                    default => $direction === Direction::LEFT || $direction === Direction::RIGHT ? 0 : 1,
+                };
+
+                if (isset($moveDirections[$y][$x][$beamAlignment])) {
                     continue;
                 }
 
-                $moveDirections[$y][$x][$direction->value] = true;
+                $moveDirections[$y][$x][$beamAlignment] = true;
                 array_push($newBeams, ...$this->moveBeam($map, $x, $y, $direction));
             }
 
