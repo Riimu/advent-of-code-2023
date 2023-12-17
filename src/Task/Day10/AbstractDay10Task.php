@@ -49,7 +49,7 @@ abstract class AbstractDay10Task implements TaskInterface
         $pipes = [];
 
         foreach (Direction::cases() as $direction) {
-            [$x, $y] = $this->moveDirection($startX, $startY, $direction);
+            [$x, $y] = $direction->moveCoordinates($startX, $startY);
 
             if ($this->isValidDirection($map, $x, $y, $direction)) {
                 $pipes[] = $this->traverse($map, $startX, $startY, $direction);
@@ -92,27 +92,11 @@ abstract class AbstractDay10Task implements TaskInterface
 
         do {
             $route[] = [$x, $y];
-            [$x, $y] = $this->moveDirection($x, $y, $direction);
+            [$x, $y] = $direction->moveCoordinates($x, $y);
             $direction = $this->getNextDirection($map, $x, $y, $direction);
         } while ($x !== $startX || $y !== $startY);
 
         return $route;
-    }
-
-    /**
-     * @param int $x
-     * @param int $y
-     * @param Direction $direction
-     * @return array<int, int>
-     */
-    protected function moveDirection(int $x, int $y, Direction $direction): array
-    {
-        return match ($direction) {
-            Direction::LEFT => [$x - 1, $y],
-            Direction::RIGHT => [$x + 1, $y],
-            Direction::UP => [$x, $y - 1],
-            Direction::DOWN => [$x, $y + 1],
-        };
     }
 
     /**
@@ -150,20 +134,14 @@ abstract class AbstractDay10Task implements TaskInterface
     protected function getNextDirection(array $map, int $x, int $y, Direction $direction): Direction
     {
         if ($map[$y][$x] === 'S') {
-            if ($direction !== Direction::RIGHT && $this->isValidDirection($map, $x - 1, $y, Direction::LEFT)) {
-                return Direction::LEFT;
-            }
+            foreach (Direction::cases() as $newDirection) {
+                [$newX, $newY] = $newDirection->moveCoordinates($x, $y);
 
-            if ($direction !== Direction::LEFT && $this->isValidDirection($map, $x + 1, $y, Direction::RIGHT)) {
-                return Direction::RIGHT;
-            }
-
-            if ($direction !== Direction::DOWN && $this->isValidDirection($map, $x, $y - 1, Direction::UP)) {
-                return Direction::UP;
-            }
-
-            if ($direction !== Direction::UP && $this->isValidDirection($map, $x, $y + 1, Direction::DOWN)) {
-                return Direction::DOWN;
+                if ($direction !== $newDirection->turnAround() &&
+                    $this->isValidDirection($map, $newX, $newY, $newDirection)
+                ) {
+                    return $newDirection;
+                }
             }
         }
 

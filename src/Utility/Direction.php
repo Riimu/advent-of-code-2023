@@ -11,6 +11,16 @@ enum Direction: int
     case UP = 3;
     case DOWN = 4;
 
+    public function turnAround(): self
+    {
+        return match ($this) {
+            self::LEFT => self::RIGHT,
+            self::RIGHT => self::LEFT,
+            self::UP => self::DOWN,
+            self::DOWN => self::UP,
+        };
+    }
+
     public function turnLeft(): self
     {
         return match ($this) {

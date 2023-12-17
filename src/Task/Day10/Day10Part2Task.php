@@ -53,7 +53,7 @@ class Day10Part2Task extends AbstractDay10Task
         do {
             $moveDirection = $direction;
 
-            [$x, $y] = $this->moveDirection($x, $y, $direction);
+            [$x, $y] = $direction->moveCoordinates($x, $y);
             $direction = $this->getNextDirection($map, $x, $y, $direction);
 
             if ($moveDirection === Direction::RIGHT || $direction === Direction::RIGHT) {

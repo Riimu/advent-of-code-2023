@@ -85,12 +85,7 @@ abstract class AbstractDay16Task implements TaskInterface
         $beams = [];
 
         foreach ($directions as $direction) {
-            [$newX, $newY] = match($direction) {
-                Direction::LEFT => [$x - 1, $y],
-                Direction::RIGHT => [$x + 1, $y],
-                Direction::UP => [$x, $y - 1],
-                Direction::DOWN => [$x, $y + 1],
-            };
+            [$newX, $newY] = $direction->moveCoordinates($x, $y);
 
             if (isset($map[$newY][$newX])) {
                 $beams[] = [$newX, $newY, $direction];
