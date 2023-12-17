@@ -49,9 +49,9 @@ abstract class AbstractDay17Task implements TaskInterface
 
         $queue = new TravelPriorityQueue();
 
-        $distance = $width + $height - 3;
-        $queue->insert(new TravelNode(1, 0, $input->map[0][1], Direction::RIGHT, 1), $distance + $input->map[0][1]);
-        $queue->insert(new TravelNode(0, 1, $input->map[1][0], Direction::DOWN, 1), $distance + $input->map[1][0]);
+        $distance = $width + $height - 2;
+        $queue->insert(new TravelNode(0, 0, 0, Direction::RIGHT, 0), $distance);
+        $queue->insert(new TravelNode(0, 0, 0, Direction::DOWN, 0), $distance);
 
         $visitedNodes = new VisitedNodeCache();
 
