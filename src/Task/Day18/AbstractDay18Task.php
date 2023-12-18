@@ -51,5 +51,41 @@ abstract class AbstractDay18Task implements TaskInterface
         return (string) $this->solve($input);
     }
 
-    abstract protected function solve(Day18Input $input): int;
+    protected function solve(Day18Input $input): int
+    {
+        $totalLength = 0;
+        $points = [];
+        $x = 0;
+        $y = 0;
+
+        foreach ($input->instructions as $instruction) {
+            $direction = $this->getDirection($instruction);
+            $distance = $this->getDistance($instruction);
+            $totalLength += $distance;
+            [$x, $y] = $direction->moveCoordinates($x, $y, $distance);
+            $points[] = [$x, $y];
+        }
+
+        /** @see https://en.wikipedia.org/wiki/Shoelace_formula */
+        $area = 0;
+        $count = \count($points);
+
+        for ($i = 0; $i < $count; $i++) {
+            $previous = $i === 0 ? $count - 1 : $i - 1;
+            $next = ($i + 1) % $count;
+
+            $area += $points[$i][1] * ($points[$previous][0] - $points[$next][0]);
+        }
+
+        $area = abs($area / 2);
+
+        /** @see https://en.wikipedia.org/wiki/Pick%27s_theorem */
+        $internalPoints = $area - ($totalLength / 2) + 1;
+
+        return $internalPoints + $totalLength;
+    }
+
+    abstract protected function getDirection(Instruction $instruction): Direction;
+
+    abstract protected function getDistance(Instruction $instruction): int;
 }
