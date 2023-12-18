@@ -80,4 +80,19 @@ class Parse
         preg_match_all('/-?\d+/', $input, $match);
         return array_map(self::int(...), $match[0]);
     }
+
+    public static function hexadecimal(string $input): int
+    {
+        if (!preg_match('/^[0-9a-f]+$/i', $input)) {
+            throw new \UnexpectedValueException("Invalid hexadecimal value '$input'");
+        }
+
+        $value = hexdec($input);
+
+        if (!\is_int($value)) {
+            throw new \UnexpectedValueException("Unexpected float value from hexadecimal '$value'");
+        }
+
+        return $value;
+    }
 }

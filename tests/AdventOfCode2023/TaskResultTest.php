@@ -41,7 +41,7 @@ class TaskResultTest extends TestCase
      */
     public static function resultTestProvider(): iterable
     {
-        $testCases = [
+        return [
             [Task\Day1\Day1Part1Task::class, __DIR__ . '/../../input/day-1-sample-1.txt', '142'],
             [Task\Day1\Day1Part1Task::class, __DIR__ . '/../../input/day-1-input.txt', '55090'],
             [Task\Day1\Day1Part2Task::class, __DIR__ . '/../../input/day-1-sample-2.txt', '281'],
@@ -133,17 +133,9 @@ class TaskResultTest extends TestCase
             [Task\Day17\Day17Part2Task::class, __DIR__ . '/../../input/day-17-sample-1.txt', '94'],
             [Task\Day17\Day17Part2Task::class, __DIR__ . '/../../input/day-17-sample-2.txt', '71'],
             [Task\Day17\Day17Part2Task::class, __DIR__ . '/../../input/day-17-input.txt', '773'],
+
+            [Task\Day18\Day18Part1Task::class, __DIR__ . '/../../input/day-18-sample-1.txt', '62'],
+            [Task\Day18\Day18Part1Task::class, __DIR__ . '/../../input/day-18-input.txt', '58550'],
         ];
-
-        $testCounts = [];
-
-        foreach ($testCases as [$class, $filename, $result]) {
-            $name = basename($class);
-
-            $testCounts[$name] ??= 0;
-            $testCounts[$name]++;
-
-            yield sprintf('%s-%d', $name, $testCounts[$name]) => [$class, $filename, $result];
-        }
     }
 }

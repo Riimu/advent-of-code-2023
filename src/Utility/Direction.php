@@ -11,6 +11,17 @@ enum Direction: int
     case UP = 3;
     case DOWN = 4;
 
+    public static function fromString(string $string): self
+    {
+        return match ($string) {
+            'L' => self::LEFT,
+            'R' => self::RIGHT,
+            'U' => self::UP,
+            'D' => self::DOWN,
+            default => throw new \ValueError("Unexpected direction string '$string'"),
+        };
+    }
+
     public function turnAround(): self
     {
         return match ($this) {
@@ -44,15 +55,16 @@ enum Direction: int
     /**
      * @param int $x
      * @param int $y
+     * @param int $distance
      * @return array{0: int, 1: int}
      */
-    public function moveCoordinates(int $x, int $y): array
+    public function moveCoordinates(int $x, int $y, int $distance = 1): array
     {
         return match ($this) {
-            self::LEFT => [$x - 1, $y],
-            self::RIGHT => [$x + 1, $y],
-            self::UP => [$x, $y - 1],
-            self::DOWN => [$x, $y + 1],
+            self::LEFT => [$x - $distance, $y],
+            self::RIGHT => [$x + $distance, $y],
+            self::UP => [$x, $y - $distance],
+            self::DOWN => [$x, $y + $distance],
         };
     }
 }
