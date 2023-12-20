@@ -12,6 +12,7 @@ namespace Riimu\AdventOfCode2023\Task\Day20;
 readonly class CommunicationModule
 {
     public const BROADCASTER = 'broadcaster';
+    public const FINAL_MODULE = 'rx';
 
     /**
      * @param string $name

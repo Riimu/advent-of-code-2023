@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Riimu\AdventOfCode2023\Task\Day20;
 
+use Riimu\AdventOfCode2023\Utility\Math;
+
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2023 Riikka Kalliomäki
@@ -21,129 +23,80 @@ class Day20Part2Task extends AbstractDay20Task
             }
         }
 
-        $functions = [];
-        $indent2 = str_repeat(' ', 4 * 2);
-        $indent3 = str_repeat(' ', 4 * 3);
-        $indent4 = str_repeat(' ', 4 * 4);
+        $emptyFlipFlopState = [];
+        $emptyConjunctionState = [];
 
         foreach ($input->modules as $module) {
-            $highSignals = implode("\n$indent3", array_map(fn(string $x): string => $this->makeSignal($module, true, $input->modules[$x] ?? null), $module->outputs));
-            $lowSignals = implode("\n$indent2", array_map(fn(string $x): string => $this->makeSignal($module, false, $input->modules[$x] ?? null), $module->outputs));
-
             if ($module->type === ModuleType::FlipFlop) {
-                $functions[$module->name] = <<<PHP
-                        public function $module->name(bool \$signal): void
-                        {
-                            static \$state = false;
-
-                            if (\$signal) {
-                                return;
-                            }
-
-                            \$state = !\$state;
-
-                            if (\$state) {
-                                $highSignals
-                                return;
-                            }
-
-                            $lowSignals
-                        }
-                    PHP;
+                $emptyFlipFlopState[$module->name] = false;
             } elseif ($module->type === ModuleType::Conjuction) {
-                $state = implode(', ', array_map(static fn(string $x): string => sprintf("'%s' => null", $x), $moduleInputs[$module->name]));
-                $condition = implode(', ', array_map(static fn(string $x): string => sprintf("\$state['%s']", $x), $moduleInputs[$module->name]));
-
-                $functions[$module->name] = <<<PHP
-                        public function $module->name(bool \$signal, string \$from): void
-                        {
-                            static \$state = [$state];
-
-                            \$state[\$from] = \$signal ? true : null;
-
-                            if (!isset($condition)) {
-                                $highSignals
-                                return;
-                            }
-
-                            $lowSignals
-                        }
-                    PHP;
+                $emptyConjunctionState[$module->name] = array_fill_keys($moduleInputs[$module->name], false);
             }
         }
 
-        $broadcast = implode(
-            "\n$indent4",
-            array_map(
-                fn(string $x): string => $this->makeSignal($input->modules[CommunicationModule::BROADCASTER], false, $input->modules[$x]),
-                $input->modules[CommunicationModule::BROADCASTER]->outputs
-            )
-        );
+        $counts = [];
+        $lastInputModule = $moduleInputs[CommunicationModule::FINAL_MODULE][array_key_first($moduleInputs[CommunicationModule::FINAL_MODULE])];
 
-        $allFunctions = implode("\n\n", $functions);
+        foreach ($input->modules[CommunicationModule::BROADCASTER]->outputs as $start) {
+            $flipFlopState = $emptyFlipFlopState;
+            $conjunctionState = $emptyConjunctionState;
+            $buttonPresses = 0;
 
-        $file = <<<PHP
-        <?php
-        
-        declare(strict_types=1);
-        
-        namespace Riimu\AdventOfCode2023\Task\Day20;
-        
-        (new Test())->broadcast();
-        
-        class Test
-        {
-            /** @var \SplQueue<\Closure> */
-            public \SplQueue \$queue;
+            while (true) {
+                /** @var \SplQueue<Pulse> $pulses */
+                $pulses = new \SplQueue();
+                $this->addPulse(
+                    $pulses,
+                    new CommunicationModule(CommunicationModule::BROADCASTER, ModuleType::Broadcaster, [$start]),
+                    false
+                );
 
-            public function broadcast(): void
-            {
-                \$this->queue = new \SplQueue();
-                \$buttonPresses = 0;
-        
-                try {
-                    while (true) {
-                        \$buttonPresses++;
+                $buttonPresses++;
 
-                        $broadcast
+                while (!$pulses->isEmpty()) {
+                    $pulse = $pulses->dequeue();
+                    $name = $pulse->target;
 
-                        while (!\$this->queue->isEmpty()) {
-                            \$this->queue->dequeue()();
-                        }
+                    if ($pulse->target === $lastInputModule && $pulse->highPulse) {
+                        $counts[] = $buttonPresses;
+                        continue 3;
                     }
-                } catch (\Throwable \$exception) {
-                    echo \$buttonPresses . PHP_EOL;
-                    echo \$exception;
+
+                    if (!isset($input->modules[$name])) {
+                        continue;
+                    }
+
+                    $module = $input->modules[$name];
+
+                    if ($module->type === ModuleType::FlipFlop) {
+                        if ($pulse->highPulse) {
+                            continue;
+                        }
+
+                        $flipFlopState[$name] = !$flipFlopState[$name];
+                        $this->addPulse($pulses, $module, $flipFlopState[$name]);
+                    } elseif ($module->type === ModuleType::Conjuction) {
+                        $conjunctionState[$name][$pulse->source] = $pulse->highPulse;
+                        $allHigh = \count(array_filter($conjunctionState[$name])) === \count($conjunctionState[$name]);
+                        $this->addPulse($pulses, $module, !$allHigh);
+                    }
                 }
             }
-
-            public function rx(bool \$signal): void
-            {
-                if (!\$signal) {
-                    throw new \RuntimeException('We did it!');
-                }
-            }
-
-        $allFunctions
         }
-        
-        PHP;
 
-        file_put_contents(__DIR__ . '/Test.php', $file);
-
-        return 0;
+        return Math::getLeastCommonMultiple($counts);
     }
 
-    private function makeSignal(CommunicationModule $from, bool $signal, ?CommunicationModule $to): string
+    /**
+     * @param \SplQueue<Pulse> $pulses
+     * @param CommunicationModule $module
+     * @param bool $high
+     * @return void
+     */
+    private function addPulse(\SplQueue $pulses, CommunicationModule $module, bool $high): void
     {
-        if ($to === null) {
-            return sprintf('$this->queue->enqueue(fn() => $this->rx(%s));', var_export($signal, true));
+        foreach ($module->outputs as $output) {
+            $pulses->enqueue(new Pulse($module->name, $output, $high));
         }
-
-        if ($to->type === ModuleType::FlipFlop) {
-            return sprintf('$this->queue->enqueue(fn() => $this->%s(%s));', $to->name, var_export($signal, true));
-        }
-
-        return sprintf('$this->queue->enqueue(fn() => $this->%s(%s, %s));', $to->name, var_export($signal, true), var_export($from->name, true));
     }
 }
