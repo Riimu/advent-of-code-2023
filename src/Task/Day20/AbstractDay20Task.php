@@ -62,4 +62,28 @@ abstract class AbstractDay20Task implements TaskInterface
     }
 
     abstract protected function solve(Day20Input $input): int;
+
+    protected function processPulse(CommunicationModule$module, Pulse $pulse, ModuleState $state, PulseQueue $queue): void
+    {
+        if ($module->type === ModuleType::FlipFlop) {
+            if ($pulse->highPulse) {
+                return;
+            }
+
+            $state->flipFlops[$module->name] = !$state->flipFlops[$module->name];
+            $queue->enqueueOutput($module, $state->flipFlops[$module->name]);
+        } elseif ($module->type === ModuleType::Conjuction) {
+            $state->conjunctions[$module->name][$pulse->source] = $pulse->highPulse;
+            $outputHighPulse = false;
+
+            foreach ($state->conjunctions[$module->name] as $memory) {
+                if (!$memory) {
+                    $outputHighPulse = true;
+                    break;
+                }
+            }
+
+            $queue->enqueueOutput($module, $outputHighPulse);
+        }
+    }
 }

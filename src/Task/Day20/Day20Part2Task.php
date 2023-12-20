@@ -15,70 +15,29 @@ class Day20Part2Task extends AbstractDay20Task
 {
     protected function solve(Day20Input $input): int
     {
-        $moduleInputs = [];
-
-        foreach ($input->modules as $module) {
-            foreach ($module->outputs as $name) {
-                $moduleInputs[$name][] = $module->name;
-            }
-        }
-
-        $emptyFlipFlopState = [];
-        $emptyConjunctionState = [];
-
-        foreach ($input->modules as $module) {
-            if ($module->type === ModuleType::FlipFlop) {
-                $emptyFlipFlopState[$module->name] = false;
-            } elseif ($module->type === ModuleType::Conjuction) {
-                $emptyConjunctionState[$module->name] = array_fill_keys($moduleInputs[$module->name], false);
-            }
-        }
-
+        $lastInputModule = $this->findLastInputModule($input->modules);
         $counts = [];
-        $lastInputModule = $moduleInputs[CommunicationModule::FINAL_MODULE][array_key_first($moduleInputs[CommunicationModule::FINAL_MODULE])];
 
         foreach ($input->modules[CommunicationModule::BROADCASTER]->outputs as $start) {
-            $flipFlopState = $emptyFlipFlopState;
-            $conjunctionState = $emptyConjunctionState;
+            $initialModule = new CommunicationModule(CommunicationModule::BROADCASTER, ModuleType::Broadcaster, [$start]);
             $buttonPresses = 0;
+            $state = new ModuleState($input->modules);
 
             while (true) {
-                /** @var \SplQueue<Pulse> $pulses */
-                $pulses = new \SplQueue();
-                $this->addPulse(
-                    $pulses,
-                    new CommunicationModule(CommunicationModule::BROADCASTER, ModuleType::Broadcaster, [$start]),
-                    false
-                );
-
+                $pulseQueue = new PulseQueue();
+                $pulseQueue->enqueueOutput($initialModule, false);
                 $buttonPresses++;
 
-                while (!$pulses->isEmpty()) {
-                    $pulse = $pulses->dequeue();
-                    $name = $pulse->target;
+                while (!$pulseQueue->isEmpty()) {
+                    $pulse = $pulseQueue->dequeue();
 
                     if ($pulse->target === $lastInputModule && $pulse->highPulse) {
                         $counts[] = $buttonPresses;
                         continue 3;
                     }
 
-                    if (!isset($input->modules[$name])) {
-                        continue;
-                    }
-
-                    $module = $input->modules[$name];
-
-                    if ($module->type === ModuleType::FlipFlop) {
-                        if ($pulse->highPulse) {
-                            continue;
-                        }
-
-                        $flipFlopState[$name] = !$flipFlopState[$name];
-                        $this->addPulse($pulses, $module, $flipFlopState[$name]);
-                    } elseif ($module->type === ModuleType::Conjuction) {
-                        $conjunctionState[$name][$pulse->source] = $pulse->highPulse;
-                        $allHigh = \count(array_filter($conjunctionState[$name])) === \count($conjunctionState[$name]);
-                        $this->addPulse($pulses, $module, !$allHigh);
+                    if (isset($input->modules[$pulse->target])) {
+                        $this->processPulse($input->modules[$pulse->target], $pulse, $state, $pulseQueue);
                     }
                 }
             }
@@ -88,15 +47,17 @@ class Day20Part2Task extends AbstractDay20Task
     }
 
     /**
-     * @param \SplQueue<Pulse> $pulses
-     * @param CommunicationModule $module
-     * @param bool $high
-     * @return void
+     * @param array<CommunicationModule> $modules
+     * @return string
      */
-    private function addPulse(\SplQueue $pulses, CommunicationModule $module, bool $high): void
+    private function findLastInputModule(array $modules): string
     {
-        foreach ($module->outputs as $output) {
-            $pulses->enqueue(new Pulse($module->name, $output, $high));
+        foreach ($modules as $module) {
+            if (\in_array(CommunicationModule::FINAL_MODULE, $module->outputs)) {
+                return $module->name;
+            }
         }
+
+        return '';
     }
 }
