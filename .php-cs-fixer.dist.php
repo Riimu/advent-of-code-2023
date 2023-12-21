@@ -18,6 +18,7 @@ return (new PhpCsFixer\Config())
         'cast_spaces' => true,
         'declare_strict_types' => true,
         'global_namespace_import' => ['import_classes' => false, 'import_constants' => false, 'import_functions' => false],
+        'native_constant_invocation' => true,
         'native_function_invocation' => true,
         'no_extra_blank_lines' => ['tokens' => ['extra', 'curly_brace_block']],
         'no_unused_imports' => true,
