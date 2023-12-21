@@ -66,6 +66,7 @@ abstract class AbstractDay21Task implements TaskInterface
     protected function countStepsFrom(array $map, int $startX, int $startY): array
     {
         $stepsFromStart = array_fill(0, \count($map), array_fill(0, \count($map[0]), null));
+        $stepsFromStart[$startY][$startX] = 0;
 
         /** @var \SplQueue<array{0: int, 1: int, 2: int}> $stepsQueue */
         $stepsQueue = new \SplQueue();

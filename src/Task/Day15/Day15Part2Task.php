@@ -21,7 +21,7 @@ class Day15Part2Task extends AbstractDay15Task
         $boxes = array_fill(0, 256, []);
 
         foreach ($input->operations as $operation) {
-            if (!preg_match('/^([a-z]+)([-=])(\d+)?$/', $operation, $match, PREG_UNMATCHED_AS_NULL)) {
+            if (!preg_match('/^([a-z]+)([-=])(\d+)?$/', $operation, $match, \PREG_UNMATCHED_AS_NULL)) {
                 throw new \RuntimeException("Invalid operation '$operation'");
             }
 

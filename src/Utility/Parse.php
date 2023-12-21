@@ -17,7 +17,7 @@ class Parse
      */
     public static function lines(string $input): array
     {
-        $lines = preg_split('/(\r\n|\r(?!\n)|(?<!\r)\n)/', trim($input), 0, PREG_SPLIT_NO_EMPTY);
+        $lines = preg_split('/(\r\n|\r(?!\n)|(?<!\r)\n)/', trim($input), 0, \PREG_SPLIT_NO_EMPTY);
 
         if (!\is_array($lines)) {
             throw new \UnexpectedValueException('Unexpected value returned from preg_split');
@@ -32,7 +32,7 @@ class Parse
      */
     public static function sections(string $input): array
     {
-        $sections = preg_split('/(\r\n|\r(?!\n)|(?<!\r)\n){2}/', trim($input), 0, PREG_SPLIT_NO_EMPTY);
+        $sections = preg_split('/(\r\n|\r(?!\n)|(?<!\r)\n){2}/', trim($input), 0, \PREG_SPLIT_NO_EMPTY);
 
         if (!\is_array($sections)) {
             throw new \UnexpectedValueException('Unexpected value returned from preg_split');
@@ -47,7 +47,7 @@ class Parse
      */
     public static function namedSections(string $input): array
     {
-        preg_match_all('/^(.*):/m', trim($input), $match, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+        preg_match_all('/^(.*):/m', trim($input), $match, \PREG_OFFSET_CAPTURE | \PREG_SET_ORDER);
 
         $sections = [];
 

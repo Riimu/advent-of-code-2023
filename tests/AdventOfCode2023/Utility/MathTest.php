@@ -76,7 +76,7 @@ class MathTest extends TestCase
 
         $expectedPrimes = array_map(
             static fn(string $x): int => (int) $x,
-            preg_split('/\s+/', $primes, 0, PREG_SPLIT_NO_EMPTY) ?: []
+            preg_split('/\s+/', $primes, 0, \PREG_SPLIT_NO_EMPTY) ?: []
         );
 
         $this->assertCount(10000, $expectedPrimes);

@@ -32,7 +32,7 @@ abstract class AbstractDay2Task implements TaskInterface
             $sets = [];
 
             foreach (explode(';', $data) as $lineSet) {
-                preg_match_all('/(\d+) (red|green|blue)/', $lineSet, $setMatches, PREG_SET_ORDER);
+                preg_match_all('/(\d+) (red|green|blue)/', $lineSet, $setMatches, \PREG_SET_ORDER);
                 $colors = [];
 
                 foreach ($setMatches as $setMatch) {
