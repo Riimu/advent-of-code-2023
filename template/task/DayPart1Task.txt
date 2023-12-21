@@ -13,6 +13,6 @@ class Day{{NUMBER}}Part1Task extends AbstractDay{{NUMBER}}Task
 {
     protected function solve(Day{{NUMBER}}Input $input): int
     {
-        // Provide implementation
+        return 0;
     }
 }
