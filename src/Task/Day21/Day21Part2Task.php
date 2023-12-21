@@ -11,7 +11,10 @@ namespace Riimu\AdventOfCode2023\Task\Day21;
  */
 class Day21Part2Task extends AbstractDay21Task
 {
-    protected const MAX_STEPS = 26501365;
+    private const MAX_STEPS = 26501365;
+    private const CACHE_MAX = -1;
+    private const CACHE_EVEN = -2;
+    private const CACHE_ODD = -3;
 
     protected function solve(Day21Input $input): int
     {
@@ -91,16 +94,16 @@ class Day21Part2Task extends AbstractDay21Task
         $remainingSteps %= $length;
         $totalReachable = 0;
 
-        $reachableCache[-1] ??= max(array_map(static fn(array $x): int => max($x) ?? 0, $stepCounts));
-        $reachableCache[-2] ??= $this->countReachable($stepCounts, 10 ** (int) log($reachableCache[-1] * 10, 10));
-        $reachableCache[-3] ??= $this->countReachable($stepCounts, 1 + 10 ** (int) log($reachableCache[-1] * 10, 10));
+        $reachableCache[self::CACHE_MAX] ??= max(array_map(static fn(array $x): int => max($x) ?? 0, $stepCounts));
+        $reachableCache[self::CACHE_EVEN] ??= $this->countReachable($stepCounts, 10 ** (int) log($reachableCache[-1] * 10, 10));
+        $reachableCache[self::CACHE_ODD] ??= $this->countReachable($stepCounts, 1 + 10 ** (int) log($reachableCache[-1] * 10, 10));
 
         while (true) {
             $reachableCache[$remainingSteps] ??= $this->countReachable($stepCounts, $remainingSteps);
             $totalReachable += $reachableCache[$remainingSteps];
             $remainingSteps += $length;
 
-            if ($remainingSteps >= $reachableCache[-1] || $fullMaps === 0) {
+            if ($remainingSteps >= $reachableCache[self::CACHE_MAX] || $fullMaps === 0) {
                 break;
             }
 
@@ -114,6 +117,6 @@ class Day21Part2Task extends AbstractDay21Task
             [$evenMaps, $oddMaps] = [$oddMaps, $evenMaps];
         }
 
-        return $totalReachable + $evenMaps * $reachableCache[-2] + $oddMaps * $reachableCache[-3];
+        return $totalReachable + $evenMaps * $reachableCache[self::CACHE_EVEN] + $oddMaps * $reachableCache[self::CACHE_ODD];
     }
 }
