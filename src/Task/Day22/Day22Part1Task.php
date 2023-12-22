@@ -13,8 +13,7 @@ class Day22Part1Task extends AbstractDay22Task
 {
     protected function solve(Day22Input $input): int
     {
-        $brickState = $this->simulateState($input->bricks);
-
+        $brickState = $this->simulateState(BrickState::createFromInput($input));
         $canDisintegrate = 0;
 
         foreach ($brickState->brickList as $bricks) {

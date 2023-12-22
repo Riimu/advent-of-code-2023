@@ -13,6 +13,17 @@ class Day22Part2Task extends AbstractDay22Task
 {
     protected function solve(Day22Input $input): int
     {
-        return 0;
+        $brickState = $this->simulateState(BrickState::createFromInput($input));
+        $totalFallenBricks = 0;
+
+        foreach ($brickState->brickList as $bricks) {
+            foreach ($bricks as $brick) {
+                if ($this->getSupportedBricks($brick, $brickState) !== []) {
+                    $totalFallenBricks += $this->simulateState($brickState->removeBrick($brick), $brick->getTop() + 1)->changes;
+                }
+            }
+        }
+
+        return $totalFallenBricks;
     }
 }

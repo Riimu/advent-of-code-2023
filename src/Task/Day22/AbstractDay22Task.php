@@ -48,28 +48,17 @@ abstract class AbstractDay22Task implements TaskInterface
 
     abstract protected function solve(Day22Input $input): int;
 
-    /**
-     * @param array<int, Brick> $initialBricks
-     * @return BrickState
-     */
-    protected function simulateState(array $initialBricks): BrickState
+    protected function simulateState(BrickState $state, int $fromZ = 1): BrickState
     {
-        $brickTops = [];
-
-        /** @var array<int, array<int, Brick>> $brickList */
-        $brickList = [];
-
-        foreach ($initialBricks as $brick) {
-            $brickList[$brick->getBottom()][] = $brick;
-
-            foreach ($brick->iterateTop() as $coordinate) {
-                $brickTops[$coordinate->z][$coordinate->y][$coordinate->x] = $brick;
-            }
-        }
-
-        ksort($brickList);
+        $brickTops = $state->brickTops;
+        $brickList = $state->brickList;
+        $changes = 0;
 
         foreach ($brickList as $z => $bricks) {
+            if ($z < $fromZ) {
+                continue;
+            }
+
             foreach ($bricks as $key => $brick) {
                 $maxFall = 1;
 
@@ -93,13 +82,16 @@ abstract class AbstractDay22Task implements TaskInterface
                         $brickTops[$coordinate->z][$coordinate->y][$coordinate->x] = $fallenBrick;
                     }
 
+                    $changes++;
                     $brickList[$maxFall][] = $fallenBrick;
                     unset($brickList[$z][$key]);
                 }
             }
         }
 
-        return new BrickState($brickTops, $brickList);
+        ksort($brickList);
+
+        return new BrickState($brickTops, $brickList, $changes);
     }
 
     /**
