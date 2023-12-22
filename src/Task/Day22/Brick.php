@@ -9,74 +9,87 @@ namespace Riimu\AdventOfCode2023\Task\Day22;
  * @copyright Copyright (c) 2023 Riikka Kalliomäki
  * @license http://opensource.org/licenses/mit-license.php MIT License
  */
-readonly class Brick
+class Brick
 {
-    public function __construct(
-        public BrickCoordinate $start,
-        public BrickCoordinate $end,
-    ) {}
+    public readonly BrickCoordinate $bottom;
+    public readonly BrickCoordinate $top;
+    public readonly bool $vertical;
+
+    /** @var array<int, BrickCoordinate>|null */
+    private array|null $allCoordinates;
+
+    public function __construct(BrickCoordinate $start, BrickCoordinate $end)
+    {
+        if ($start->x > $end->x || $start->y > $end->y || $start->z > $end->z) {
+            $this->bottom = $end;
+            $this->top = $start;
+        } else {
+            $this->bottom = $start;
+            $this->top = $end;
+        }
+
+        $this->vertical = $start->z !== $end->z;
+        $this->allCoordinates = null;
+    }
 
     public function fallTo(int $z): self
     {
-        $fallHeight = $this->getBottom() - $z;
+        $fallHeight = $this->bottom->z - $z;
 
         return new Brick(
-            new BrickCoordinate($this->start->x, $this->start->y, $this->start->z - $fallHeight),
-            new BrickCoordinate($this->end->x, $this->end->y, $this->end->z - $fallHeight)
+            new BrickCoordinate($this->bottom->x, $this->bottom->y, $this->bottom->z - $fallHeight),
+            new BrickCoordinate($this->top->x, $this->top->y, $this->top->z - $fallHeight)
         );
     }
 
-    public function getTop(): int
+    /**
+     * @return array<int, BrickCoordinate>
+     */
+    public function getCeilingCoordinates(): array
     {
-        return max($this->start->z, $this->end->z);
-    }
-
-    public function getBottom(): int
-    {
-        return min($this->start->z, $this->end->z);
+        return $this->vertical ? [$this->top] : $this->getAllCoordinates();
     }
 
     /**
-     * @return iterable<BrickCoordinate>
+     * @return array<int, BrickCoordinate>
      */
-    public function iterateTop(): iterable
+    public function getFloorCoordinates(): array
     {
-        yield from match (true) {
-            $this->start->z !== $this->end->z => [$this->start->z > $this->end->z ? $this->start : $this->end],
-            $this->start->y !== $this->end->y => $this->iterateY(),
-            default => $this->iterateX()
-        };
+        return $this->vertical ? [$this->bottom] : $this->getAllCoordinates();
     }
 
     /**
-     * @return iterable<BrickCoordinate>
+     * @return array<int, BrickCoordinate>
      */
-    public function iterateBottom(): iterable
+    private function getAllCoordinates(): array
     {
-        yield from match (true) {
-            $this->start->z !== $this->end->z => [$this->start->z < $this->end->z ? $this->start : $this->end],
-            $this->start->y !== $this->end->y => $this->iterateY(),
-            default => $this->iterateX()
-        };
+        return $this->allCoordinates ??= $this->createCoordinates();
     }
 
     /**
-     * @return iterable<BrickCoordinate>
+     * @return array<int, BrickCoordinate>
      */
-    public function iterateX(): iterable
+    private function createCoordinates(): array
     {
-        foreach (range($this->start->x, $this->end->x) as $x) {
-            yield new BrickCoordinate($x, $this->start->y, $this->start->z);
+        $coordinateList = [$this->bottom];
+
+        if ($this->top->x > $this->bottom->x) {
+            for ($x = $this->bottom->x + 1; $x < $this->top->x; $x++) {
+                $coordinateList[] = new BrickCoordinate($x, $this->bottom->y, $this->bottom->z);
+            }
+        } elseif ($this->top->y > $this->bottom->y) {
+            for ($y = $this->bottom->y + 1; $y < $this->top->y; $y++) {
+                $coordinateList[] = new BrickCoordinate($this->bottom->x, $y, $this->bottom->z);
+            }
+        } elseif ($this->top->z > $this->bottom->z) {
+            for ($z = $this->bottom->z + 1; $z < $this->top->z; $z++) {
+                $coordinateList[] = new BrickCoordinate($this->bottom->x, $this->bottom->y, $z);
+            }
+        } else {
+            return $coordinateList;
         }
-    }
 
-    /**
-     * @return iterable<BrickCoordinate>
-     */
-    public function iterateY(): iterable
-    {
-        foreach (range($this->start->y, $this->end->y) as $y) {
-            yield new BrickCoordinate($this->start->x, $y, $this->start->z);
-        }
+        $coordinateList[] = $this->top;
+        return $coordinateList;
     }
 }

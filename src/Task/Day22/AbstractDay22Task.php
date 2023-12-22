@@ -28,10 +28,13 @@ abstract class AbstractDay22Task implements TaskInterface
 
         foreach (Parse::lines($input) as $line) {
             [$startX, $startY, $startZ, $endX, $endY, $endZ] = Parse::ints($line);
-            $bricks[] = new Brick(
-                new BrickCoordinate($startX, $startY, $startZ),
-                new BrickCoordinate($endX, $endY, $endZ)
-            );
+
+            $start = new BrickCoordinate($startX, $startY, $startZ);
+            $end = $startX !== $endX || $startY !== $endY || $startZ !== $endZ
+                ? new BrickCoordinate($endX, $endY, $endZ)
+                : $start;
+
+            $bricks[] = new Brick($start, $end);
         }
 
         return new Day22Input($bricks);
@@ -62,7 +65,7 @@ abstract class AbstractDay22Task implements TaskInterface
             foreach ($bricks as $key => $brick) {
                 $maxFall = 1;
 
-                foreach ($brick->iterateBottom() as $coordinate) {
+                foreach ($brick->getFloorCoordinates() as $coordinate) {
                     for ($i = $z - 1; $i > 0; $i--) {
                         if (isset($brickTops[$i][$coordinate->y][$coordinate->x])) {
                             $maxFall = max($maxFall, $i + 1);
@@ -74,11 +77,11 @@ abstract class AbstractDay22Task implements TaskInterface
                 if ($maxFall !== $z) {
                     $fallenBrick = $brick->fallTo($maxFall);
 
-                    foreach ($brick->iterateTop() as $coordinate) {
+                    foreach ($brick->getCeilingCoordinates() as $coordinate) {
                         unset($brickTops[$coordinate->z][$coordinate->y][$coordinate->x]);
                     }
 
-                    foreach ($fallenBrick->iterateTop() as $coordinate) {
+                    foreach ($fallenBrick->getCeilingCoordinates() as $coordinate) {
                         $brickTops[$coordinate->z][$coordinate->y][$coordinate->x] = $fallenBrick;
                     }
 
@@ -102,14 +105,13 @@ abstract class AbstractDay22Task implements TaskInterface
     protected function getSupportedBricks(Brick $brick, BrickState $state): array
     {
         $supportedBricks = [];
-        $z = $brick->getTop();
 
-        foreach ($state->brickList[$z + 1] ?? [] as $supportedBrick) {
+        foreach ($state->brickList[$brick->top->z + 1] ?? [] as $supportedBrick) {
             $supports = [];
 
-            foreach ($supportedBrick->iterateBottom() as $supported) {
-                if (isset($state->brickTops[$z][$supported->y][$supported->x])) {
-                    $supportingBrick = $state->brickTops[$z][$supported->y][$supported->x];
+            foreach ($supportedBrick->getFloorCoordinates() as $supported) {
+                if (isset($state->brickTops[$brick->top->z][$supported->y][$supported->x])) {
+                    $supportingBrick = $state->brickTops[$brick->top->z][$supported->y][$supported->x];
 
                     if (!\in_array($supportingBrick, $supports, true)) {
                         $supports[] = $supportingBrick;

@@ -19,7 +19,7 @@ class Day22Part2Task extends AbstractDay22Task
         foreach ($brickState->brickList as $bricks) {
             foreach ($bricks as $brick) {
                 if ($this->getSupportedBricks($brick, $brickState) !== []) {
-                    $totalFallenBricks += $this->simulateState($brickState->removeBrick($brick), $brick->getTop() + 1)->changes;
+                    $totalFallenBricks += $this->simulateState($brickState->removeBrick($brick), $brick->top->z + 1)->changes;
                 }
             }
         }

@@ -24,14 +24,12 @@ readonly class BrickState
     public static function createFromInput(Day22Input $input): self
     {
         $brickTops = [];
-
-        /** @var array<int, array<int, Brick>> $brickList */
         $brickList = [];
 
         foreach ($input->bricks as $brick) {
-            $brickList[$brick->getBottom()][] = $brick;
+            $brickList[$brick->bottom->z][] = $brick;
 
-            foreach ($brick->iterateTop() as $coordinate) {
+            foreach ($brick->getCeilingCoordinates() as $coordinate) {
                 $brickTops[$coordinate->z][$coordinate->y][$coordinate->x] = $brick;
             }
         }
@@ -45,13 +43,11 @@ readonly class BrickState
     {
         $brickTops = $this->brickTops;
         $brickList = $this->brickList;
+        $key = array_search($brick, $brickList[$brick->bottom->z], true);
 
-        $z = $brick->getBottom();
-        $key = array_search($brick, $brickList[$z], true);
+        unset($brickList[$brick->bottom->z][$key]);
 
-        unset($brickList[$z][$key]);
-
-        foreach ($brick->iterateTop() as $coordinate) {
+        foreach ($brick->getCeilingCoordinates() as $coordinate) {
             unset($brickTops[$coordinate->z][$coordinate->y][$coordinate->x]);
         }
 
