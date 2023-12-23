@@ -22,6 +22,7 @@ enum Direction: int
         };
     }
 
+    // Every now and then I get a little bit lonely. And you're never coming 'round
     public function turnAround(): self
     {
         return match ($this) {
