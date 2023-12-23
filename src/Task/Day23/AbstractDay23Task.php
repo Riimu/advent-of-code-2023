@@ -39,29 +39,46 @@ abstract class AbstractDay23Task implements TaskInterface
 
     protected function solve(Day23Input $input): int
     {
-        $startX = 0;
         $startY = 0;
-        $endX = 0;
+        $startX = $this->findSymbolInRow($input->map, $startY, Day23Input::NODE_SPACE);
         $endY = \count($input->map) - 1;
+        $endX = $this->findSymbolInRow($input->map, $endY, Day23Input::NODE_SPACE);
+        $junctions = $this->mapAllJunctions($input->map, $startX, $startY, $endX, $endY);
 
-        foreach ($input->map[$startY] as $x => $node) {
-            if ($node === Day23Input::NODE_SPACE) {
-                $startX = $x;
-                break;
+        return $this->findLongestPath($junctions, $startX, $startY, $endX, $endY);
+    }
+
+    /**
+     * @param array<int, array<int, string>> $map
+     * @param int $row
+     * @param string $symbol
+     * @return int
+     */
+    private function findSymbolInRow(array $map, int $row, string $symbol): int
+    {
+        foreach ($map[$row] as $x => $node) {
+            if ($node === $symbol) {
+                return $x;
             }
         }
 
-        foreach ($input->map[$endY] as $x => $node) {
-            if ($node === Day23Input::NODE_SPACE) {
-                $endX = $x;
-                break;
-            }
-        }
+        return 0;
+    }
 
+    /**
+     * @param array<int, array<int, string>> $map
+     * @param int $startX
+     * @param int $startY
+     * @param int $endX
+     * @param int $endY
+     * @return array<int, array<int, array<int, array{0: int, 1: int, 2: int}>>>
+     */
+    private function mapAllJunctions(array $map, int $startX, int $startY, int $endX, int $endY): array
+    {
         $junctions = [$startY => [$startX => []], $endY => [$endX => []]];
         $junctionExits = [];
 
-        foreach ($this->getPossibleDirections($input->map, $startX, $startY) as [$x, $y, $direction]) {
+        foreach ($this->getPossibleDirections($map, $startX, $startY) as [$x, $y, $direction]) {
             $junctionExits[] = [$x, $y, $direction, $startX, $startY];
         }
 
@@ -78,7 +95,7 @@ abstract class AbstractDay23Task implements TaskInterface
                     break;
                 }
 
-                $possibleDirections = $this->getPossibleDirections($input->map, $x, $y);
+                $possibleDirections = $this->getPossibleDirections($map, $x, $y);
                 $otherDirections = array_diff_key($possibleDirections, [$direction->turnAround()->value => true]);
 
                 if ($otherDirections === []) {
@@ -117,29 +134,7 @@ abstract class AbstractDay23Task implements TaskInterface
             }
         }
 
-        $maxLength = 0;
-        $traverseQueue = [[$startX, $startY, 0, []]];
-
-        while ($traverseQueue !== []) {
-            [$x, $y, $steps, $visitedJunctions] = array_pop($traverseQueue);
-
-            if ($x === $endX && $y === $endY) {
-                $maxLength = max($steps, $maxLength);
-                continue;
-            }
-
-            $visitedJunctions[$y][$x] = true;
-
-            foreach ($junctions[$y][$x] as [$nextX, $nextY, $nextSteps]) {
-                if (isset($visitedJunctions[$nextY][$nextX])) {
-                    continue;
-                }
-
-                $traverseQueue[] = [$nextX, $nextY, $steps + $nextSteps, $visitedJunctions];
-            }
-        }
-
-        return $maxLength;
+        return $junctions;
     }
 
     /**
@@ -171,4 +166,42 @@ abstract class AbstractDay23Task implements TaskInterface
      * @return bool
      */
     abstract protected function isValidDirection(array $map, int $x, int $y, Direction $direction): bool;
+
+    /**
+     * @param array<int, array<int, array<int, array{0: int, 1: int, 2: int}>>> $junctions
+     * @param int $startX
+     * @param int $startY
+     * @param int $endX
+     * @param int $endY
+     * @return int
+     */
+    protected function findLongestPath(array $junctions, int $startX, int $startY, int $endX, int $endY): int
+    {
+        $maxLength = 0;
+        $traverseQueue = [[$startX, $startY, 0, []]];
+
+        while ($traverseQueue !== []) {
+            [$x, $y, $steps, $visitedJunctions] = array_pop($traverseQueue);
+
+            if ($x === $endX && $y === $endY) {
+                if ($steps > $maxLength) {
+                    $maxLength = $steps;
+                }
+
+                continue;
+            }
+
+            $visitedJunctions[$y][$x] = true;
+
+            foreach ($junctions[$y][$x] as [$nextX, $nextY, $nextSteps]) {
+                if (isset($visitedJunctions[$nextY][$nextX])) {
+                    continue;
+                }
+
+                $traverseQueue[] = [$nextX, $nextY, $steps + $nextSteps, $visitedJunctions];
+            }
+        }
+
+        return $maxLength;
+    }
 }
