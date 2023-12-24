@@ -14,92 +14,83 @@ class Day24Part2Task extends AbstractDay24Task
     // Courtesy of https://www.reddit.com/r/adventofcode/comments/18pnycy/2023_day_24_solutions/keqf8uq/
     protected function solve(Day24Input $input): int
     {
-        $PotentialXSet = null;
-        $PotentialYSet = null;
-        $PotentialZSet = null;
+        $potentialXSet = null;
+        $potentialYSet = null;
+        $potentialZSet = null;
 
-        foreach ($this->combinations(\count($input->velocities)) as [$A, $B]) {
-            list($APX, $APY, $APZ) = $input->hailstones[$A];
-            list($AVX, $AVY, $AVZ) = $input->velocities[$A];
-            list($BPX, $BPY, $BPZ) = $input->hailstones[$B];
-            list($BVX, $BVY, $BVZ) = $input->velocities[$B];
+        foreach ($this->combinations(\count($input->velocities)) as [$a, $b]) {
+            [$apx, $apy, $apz] = $input->hailstones[$a];
+            [$avx, $avy, $avz] = $input->velocities[$a];
+            [$bpx, $bpy, $bpz] = $input->hailstones[$b];
+            [$bvx, $bvy, $bvz] = $input->velocities[$b];
 
-            if ($AVX === $BVX && abs($AVX) > 100) {
-                $NewXSet = array();
-                $Difference = $BPX - $APX;
+            if ($avx === $bvx) {
+                $NewXSet = [];
+                $Difference = $bpx - $apx;
                 for ($v = -1000; $v < 1000; $v++) {
-                    if ($v === $AVX) {
-                        continue;
-                    }
-                    if ($Difference % ($v - $AVX) == 0) {
+                    if ($v === $avx || $Difference % ($v - $avx) === 0) {
                         $NewXSet[] = $v;
                     }
                 }
-                if ($PotentialXSet !== null) {
-                    $PotentialXSet = array_intersect($PotentialXSet, $NewXSet);
+                if ($potentialXSet !== null) {
+                    $potentialXSet = array_intersect($potentialXSet, $NewXSet);
                 } else {
-                    $PotentialXSet = $NewXSet;
+                    $potentialXSet = $NewXSet;
                 }
             }
-            if ($AVY === $BVY && abs($AVY) > 100) {
-                $NewYSet = array();
-                $Difference = $BPY - $APY;
+            if ($avy === $bvy) {
+                $NewYSet = [];
+                $Difference = $bpy - $apy;
                 for ($v = -1000; $v < 1000; $v++) {
-                    if ($v === $AVY) {
-                        continue;
-                    }
-                    if ($Difference % ($v - $AVY) === 0) {
+                    if ($v === $avy || $Difference % ($v - $avy) === 0) {
                         $NewYSet[] = $v;
                     }
                 }
-                if ($PotentialYSet !== null) {
-                    $PotentialYSet = array_intersect($PotentialYSet, $NewYSet);
+                if ($potentialYSet !== null) {
+                    $potentialYSet = array_intersect($potentialYSet, $NewYSet);
                 } else {
-                    $PotentialYSet = $NewYSet;
+                    $potentialYSet = $NewYSet;
                 }
             }
-            if ($AVZ === $BVZ && abs($AVZ) > 100) {
-                $NewZSet = array();
-                $Difference = $BPZ - $APZ;
+            if ($avz === $bvz) {
+                $NewZSet = [];
+                $Difference = $bpz - $apz;
                 for ($v = -1000; $v < 1000; $v++) {
-                    if ($v === $AVZ) {
-                        continue;
-                    }
-                    if ($Difference % ($v - $AVZ) === 0) {
+                    if ($v === $avz || $Difference % ($v - $avz) === 0) {
                         $NewZSet[] = $v;
                     }
                 }
-                if ($PotentialZSet !== null) {
-                    $PotentialZSet = array_intersect($PotentialZSet, $NewZSet);
+                if ($potentialZSet !== null) {
+                    $potentialZSet = array_intersect($potentialZSet, $NewZSet);
                 } else {
-                    $PotentialZSet = $NewZSet;
+                    $potentialZSet = $NewZSet;
                 }
             }
 
-            if (\count($PotentialXSet ?? []) === 1 && \count($PotentialYSet ?? []) === 1 && \count($PotentialZSet ?? []) == 1) {
+            if (\count($potentialXSet ?? []) === 1 && \count($potentialYSet ?? []) === 1 && \count($potentialZSet ?? []) == 1) {
                 break;
             }
         }
 
-        $RVX = array_pop($PotentialXSet);
-        $RVY = array_pop($PotentialYSet);
-        $RVZ = array_pop($PotentialZSet);
+        $xv = array_pop($potentialXSet);
+        $yv = array_pop($potentialYSet);
+        $zv = array_pop($potentialZSet);
 
-        list($APX, $APY, $APZ) = $input->hailstones[0];
-        list($AVX, $AVY, $AVZ) = $input->velocities[0];
-        list($BPX, $BPY, $BPZ) = $input->hailstones[1];
-        list($BVX, $BVY, $BVZ) = $input->velocities[1];
+        [$apx, $apy, $apz] = $input->hailstones[0];
+        [$avx, $avy, $avz] = $input->velocities[0];
+        [$bpx, $bpy, $bpz] = $input->hailstones[1];
+        [$bvx, $bvy, $bvz] = $input->velocities[1];
 
-        $MA = ($AVY - $RVY) / ($AVX - $RVX);
-        $MB = ($BVY - $RVY) / ($BVX - $RVX);
-        $CA = $APY - ($MA * $APX);
-        $CB = $BPY - ($MB * $BPX);
-        $XPos = \intval(($CB - $CA) / ($MA - $MB));
-        $YPos = \intval($MA * $XPos + $CA);
-        $Time = ($XPos - $APX) / ($AVX - $RVX);
-        $ZPos = $APZ + ($AVZ - $RVZ) * $Time;
+        $ma = ($avy - $yv) / ($avx - $xv);
+        $mb = ($bvy - $yv) / ($bvx - $xv);
+        $ca = $apy - ($ma * $apx);
+        $cb = $bpy - ($mb * $bpx);
+        $x = \intval(($cb - $ca) / ($ma - $mb));
+        $y = \intval($ma * $x + $ca);
+        $time = ($x - $apx) / ($avx - $xv);
+        $z = $apz + ($avz - $zv) * $time;
 
-        return $XPos + $YPos + $ZPos;
+        return $x + $y + $z;
     }
 
     private function combinations(int $count): iterable
