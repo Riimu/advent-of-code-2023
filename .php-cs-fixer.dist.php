@@ -20,6 +20,7 @@ return (new PhpCsFixer\Config())
         'declare_strict_types' => true,
         'global_namespace_import' => ['import_classes' => false, 'import_constants' => false, 'import_functions' => false],
         'list_syntax' => true,
+        'modernize_types_casting' => true,
         'native_constant_invocation' => true,
         'native_function_invocation' => true,
         'no_extra_blank_lines' => ['tokens' => ['extra', 'curly_brace_block']],
