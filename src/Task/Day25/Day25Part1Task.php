@@ -122,7 +122,7 @@ class Day25Part1Task extends AbstractDay25Task
             }
         }
 
-        return \array_slice($wires, 0, 100);
+        return $wires;
     }
 
     /**
@@ -206,11 +206,17 @@ class Day25Part1Task extends AbstractDay25Task
     private function getWireCombinations(array $wires): iterable
     {
         $count = \count($wires);
+        $tested = [];
 
-        for ($i = 0; $i < $count; $i++) {
-            for ($j = $i + 1; $j < $count; $j++) {
-                for ($k = $j + 1; $k < $count; $k++) {
-                    yield [$wires[$i], $wires[$j], $wires[$k]];
+        for ($limit = 3; $limit < $count; $limit++) {
+            for ($i = 0; $i < $limit; $i++) {
+                for ($j = $i + 1; $j < $limit; $j++) {
+                    for ($k = $j + 1; $k < $limit; $k++) {
+                        if (!isset($tested[$i][$j][$k])) {
+                            $tested[$i][$j][$k] = true;
+                            yield [$wires[$i], $wires[$j], $wires[$k]];
+                        }
+                    }
                 }
             }
         }
