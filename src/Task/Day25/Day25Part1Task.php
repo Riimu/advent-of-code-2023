@@ -169,42 +169,39 @@ class Day25Part1Task extends AbstractDay25Task
             return [];
         }
 
-        $queue = new class () extends \SplPriorityQueue {
-            public function compare(mixed $priority1, mixed $priority2): int
-            {
-                return $priority2 <=> $priority1;
-            }
-        };
-
-        $queue->insert([$start, 0, []], 0);
+        $queue = [[$start, 0, []]];
         $visited = array_fill(0, \count($map), false);
 
-        while (!$queue->isEmpty()) {
-            [$node, $steps, $path] = $queue->extract();
+        do {
+            $nextQueue = [];
 
-            $path[] = $node;
-            $steps++;
+            foreach ($queue as [$node, $steps, $path]) {
+                $path[] = $node;
+                $steps++;
 
-            foreach ($map[$node] as $next) {
-                if ($visited[$next]) {
-                    continue;
+                foreach ($map[$node] as $next) {
+                    if ($visited[$next]) {
+                        continue;
+                    }
+
+                    if ($next === $goal) {
+                        return [...$path, $next];
+                    }
+
+                    $nextQueue[] = [$next, $steps, $path];
+                    $visited[$next] = true;
                 }
-
-                if ($next === $goal) {
-                    return [...$path, $next];
-                }
-
-                $queue->insert([$next, $steps, $path], $steps);
-                $visited[$next] = true;
             }
-        }
+
+            $queue = $nextQueue;
+        } while ($queue !== []);
 
         return null;
     }
 
     /**
      * @param array<int, array{0: int, 1: int}> $wires
-     * @return iterable<int, array<int, rray{0: int, 1: int}>>
+     * @return iterable<int, array<int, array{0: int, 1: int}>>
      */
     private function getWireCombinations(array $wires): iterable
     {
