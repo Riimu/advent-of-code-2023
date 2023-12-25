@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Riimu\AdventOfCode2023\Task\Day25;
 
+use Riimu\AdventOfCode2023\Utility\Parse;
+
 /**
  * @author Riikka Kalliomäki <riikka.kalliomaki@gmail.com>
  * @copyright Copyright (c) 2023 Riikka Kalliomäki
@@ -13,26 +15,25 @@ class Day25Part1Task extends AbstractDay25Task
 {
     protected function solve(Day25Input $input): int
     {
-        $wires = [];
         $wireMap = array_fill(0, \count($input->components), []);
-        $wireIds = [];
+        $componentIds = [];
 
         foreach ($input->components as $component => $connections) {
-            $wireIds[$component] ??= \count($wireIds);
+            $componentIds[$component] ??= \count($componentIds);
 
             foreach ($connections as $connection) {
-                $wireIds[$connection] ??= \count($wireIds);
+                $componentIds[$connection] ??= \count($componentIds);
             }
         }
 
         foreach ($input->components as $component => $connections) {
             foreach ($connections as $connection) {
-                $wires[] = [$wireIds[$component], $wireIds[$connection]];
-                $wireMap[$wireIds[$component]][] = $wireIds[$connection];
-                $wireMap[$wireIds[$connection]][] = $wireIds[$component];
+                $wireMap[$componentIds[$component]][] = $componentIds[$connection];
+                $wireMap[$componentIds[$connection]][] = $componentIds[$component];
             }
         }
 
+        $wires = $this->getSortedWireList($wireMap);
         $groups = [];
         $tested = 0;
         $timer = hrtime(true);
@@ -49,7 +50,7 @@ class Day25Part1Task extends AbstractDay25Task
             if ($tested % 10000 === 0) {
                 $seconds = (hrtime(true) - $timer) / 10 ** 9;
                 printf(
-                    'Tested: %s, Speed: %s / sec' . PHP_EOL,
+                    'Tested: %s, Speed: %s / sec' . \PHP_EOL,
                     number_format($tested),
                     number_format(round(10000 / $seconds))
                 );
@@ -60,9 +61,153 @@ class Day25Part1Task extends AbstractDay25Task
         return ($groups[0] ?? 0) * ($groups[1] ?? 0);
     }
 
+    /**
+     * @param array<int, array<int, int>> $map
+     * @return array<int, array{0: int, 1: int}>
+     */
+    private function getSortedWireList(array $map): array
+    {
+        foreach ($map as $key => $nodes) {
+            sort($nodes);
+            $map[$key] = $nodes;
+        }
+
+        $counts = [];
+        $start = array_key_first($map) ?? 0;
+        $furthest[] = [];
+
+        do {
+            $furthest[$start] = true;
+            $start = $this->findFurthestNode($map, $start);
+        } while (!isset($furthest[$start]));
+
+        $testNodes = \array_slice(array_keys($furthest), -2);
+
+        foreach ($testNodes as $start) {
+            foreach (array_keys($map) as $goal) {
+                $path = $this->findShortestPath($map, $start, $goal);
+
+                if ($path === null) {
+                    throw new \UnexpectedValueException('Unexpected path');
+                }
+
+                $pathLength = \count($path);
+
+                for ($i = 1; $i < $pathLength; $i++) {
+                    $key = $path[$i] < $path[$i - 1]
+                        ? sprintf('%d-%d', $path[$i], $path[$i - 1])
+                        : sprintf('%d-%d', $path[$i - 1], $path[$i]);
+
+                    $counts[$key] ??= 0;
+                    $counts[$key]++;
+                }
+            }
+        }
+
+        arsort($counts);
+        $wires = [];
+
+        foreach (array_keys($counts) as $key) {
+            $parts = explode('-', $key);
+            $wires[] = [Parse::int($parts[0]), Parse::int($parts[1])];
+        }
+
+        foreach ($map as $a => $nodes) {
+            foreach ($nodes as $b) {
+                $wire = [min($a, $b), max($a, $b)];
+
+                if (!\in_array($wire, $wires, true)) {
+                    $wires[] = $wire;
+                }
+            }
+        }
+
+        return \array_slice($wires, 0, 100);
+    }
+
+    /**
+     * @param array<int, array<int, int>> $map
+     * @param int $start
+     * @return int
+     */
+    private function findFurthestNode(array $map, int $start): int
+    {
+        $queue = [$start];
+        $visited = array_fill(0, \count($map), false);
+        $lastNode = $start;
+
+        do {
+            $nextQueue = [];
+
+            foreach ($queue as $node) {
+                foreach ($map[$node] as $next) {
+                    if ($visited[$next]) {
+                        continue;
+                    }
+
+                    $nextQueue[] = $next;
+                    $visited[$next] = true;
+                    $lastNode = $next;
+                }
+            }
+
+            $queue = $nextQueue;
+        } while ($queue !== []);
+
+        return $lastNode;
+    }
+
+    /**
+     * @param array<int, array<int, int>> $map
+     * @param int $start
+     * @param int $goal
+     * @return array<int, int>|null
+     */
+    private function findShortestPath(array $map, int $start, int $goal): ?array
+    {
+        if ($goal === $start) {
+            return [];
+        }
+
+        $queue = new class () extends \SplPriorityQueue {
+            public function compare(mixed $priority1, mixed $priority2): int
+            {
+                return $priority2 <=> $priority1;
+            }
+        };
+
+        $queue->insert([$start, 0, []], 0);
+        $visited = array_fill(0, \count($map), false);
+
+        while (!$queue->isEmpty()) {
+            [$node, $steps, $path] = $queue->extract();
+
+            $path[] = $node;
+            $steps++;
+
+            foreach ($map[$node] as $next) {
+                if ($visited[$next]) {
+                    continue;
+                }
+
+                if ($next === $goal) {
+                    return [...$path, $next];
+                }
+
+                $queue->insert([$next, $steps, $path], $steps);
+                $visited[$next] = true;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<int, array{0: int, 1: int}> $wires
+     * @return iterable<int, array<int, rray{0: int, 1: int}>>
+     */
     private function getWireCombinations(array $wires): iterable
     {
-        shuffle($wires);
         $count = \count($wires);
 
         for ($i = 0; $i < $count; $i++) {
@@ -74,6 +219,11 @@ class Day25Part1Task extends AbstractDay25Task
         }
     }
 
+    /**
+     * @param array<int, array<int, int>> $map
+     * @param array<int, array{0: int, 1: int}> $exclusions
+     * @return array<int, int>
+     */
     private function countGroups(array $map, array $exclusions): array
     {
         $visited = array_fill(0, \count($map), false);
