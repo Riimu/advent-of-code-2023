@@ -13,5 +13,5 @@ enum ModuleType
 {
     case Broadcaster;
     case FlipFlop;
-    case Conjuction;
+    case Conjunction;
 }

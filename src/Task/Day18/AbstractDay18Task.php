@@ -70,11 +70,10 @@ abstract class AbstractDay18Task implements TaskInterface
         $area = 0;
         $count = \count($points);
 
-        for ($i = 0; $i < $count; $i++) {
+        foreach ($points as $i => $point) {
             $previous = $i === 0 ? $count - 1 : $i - 1;
             $next = ($i + 1) % $count;
-
-            $area += $points[$i][1] * ($points[$previous][0] - $points[$next][0]);
+            $area += $point[1] * ($points[$previous][0] - $points[$next][0]);
         }
 
         $area = abs($area / 2);

@@ -36,7 +36,7 @@ class ModuleState
         foreach ($modules as $module) {
             if ($module->type === ModuleType::FlipFlop) {
                 $this->flipFlops[$module->name] = false;
-            } elseif ($module->type === ModuleType::Conjuction) {
+            } elseif ($module->type === ModuleType::Conjunction) {
                 $this->conjunctions[$module->name] = array_fill_keys($inputs[$module->name], false);
             }
         }

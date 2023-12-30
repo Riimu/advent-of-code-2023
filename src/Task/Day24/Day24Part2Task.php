@@ -46,7 +46,7 @@ class Day24Part2Task extends AbstractDay24Task
         }
 
         if ($potentialSet[self::INDEX_X] === null || $potentialSet[self::INDEX_Y] === null || $potentialSet[self::INDEX_Z] === null) {
-            throw new \UnexpectedValueException("Could not find an answer");
+            throw new \UnexpectedValueException('Could not find an answer');
         }
 
         $xv = array_pop($potentialSet[self::INDEX_X]);
@@ -55,8 +55,8 @@ class Day24Part2Task extends AbstractDay24Task
 
         [$apx, $apy, $apz] = $input->hailstones[0];
         [$avx, $avy, $avz] = $input->velocities[0];
-        [$bpx, $bpy, $bpz] = $input->hailstones[1];
-        [$bvx, $bvy, $bvz] = $input->velocities[1];
+        [$bpx, $bpy] = $input->hailstones[1];
+        [$bvx, $bvy] = $input->velocities[1];
 
         $ma = ($avy - $yv) / ($avx - $xv);
         $mb = ($bvy - $yv) / ($bvx - $xv);

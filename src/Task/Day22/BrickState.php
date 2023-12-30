@@ -45,6 +45,10 @@ readonly class BrickState
         $brickList = $this->brickList;
         $key = array_search($brick, $brickList[$brick->bottom->z], true);
 
+        if ($key === false) {
+            throw new \RuntimeException('Unexpected brick');
+        }
+
         unset($brickList[$brick->bottom->z][$key]);
 
         foreach ($brick->getCeilingCoordinates() as $coordinate) {

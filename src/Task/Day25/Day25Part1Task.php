@@ -231,15 +231,14 @@ class Day25Part1Task extends AbstractDay25Task
     {
         $visited = array_fill(0, \count($map), false);
         $groups = [];
+        $start = 0;
 
         foreach ($exclusions as [$a, $b]) {
-            unset($map[$a][array_search($b, $map[$a], true)]);
-            unset($map[$b][array_search($a, $map[$b], true)]);
+            unset($map[$a][array_search($b, $map[$a], true)], $map[$b][array_search($a, $map[$b], true)]);
         }
 
-        do {
+        while ($start !== false) {
             $count = 0;
-            $start = array_search(false, $visited, true);
             $exploreQueue = [$start];
             $visited[$start] = true;
 
@@ -261,7 +260,8 @@ class Day25Part1Task extends AbstractDay25Task
             } while ($exploreQueue !== []);
 
             $groups[] = $count;
-        } while (\in_array(false, $visited, true));
+            $start = array_search(false, $visited, true);
+        }
 
         return $groups;
     }

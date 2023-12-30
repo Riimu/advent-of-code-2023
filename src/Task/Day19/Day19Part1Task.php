@@ -41,7 +41,7 @@ class Day19Part1Task extends AbstractDay19Task
             return true;
         }
 
-        return $rule->operator == Operator::GREATER_THAN
+        return $rule->operator === Operator::GREATER_THAN
             ? $part->ratings[$rule->ratingName] > $rule->value
             : $part->ratings[$rule->ratingName] < $rule->value;
     }

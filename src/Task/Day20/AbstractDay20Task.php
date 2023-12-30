@@ -42,7 +42,7 @@ abstract class AbstractDay20Task implements TaskInterface
 
             $module = match ($name[0]) {
                 '%' => new CommunicationModule(substr($name, 1), ModuleType::FlipFlop, $outputs),
-                '&' => new CommunicationModule(substr($name, 1), ModuleType::Conjuction, $outputs),
+                '&' => new CommunicationModule(substr($name, 1), ModuleType::Conjunction, $outputs),
                 default => new CommunicationModule($name, ModuleType::Broadcaster, $outputs),
             };
 
@@ -72,7 +72,7 @@ abstract class AbstractDay20Task implements TaskInterface
 
             $state->flipFlops[$module->name] = !$state->flipFlops[$module->name];
             $queue->enqueueOutput($module, $state->flipFlops[$module->name]);
-        } elseif ($module->type === ModuleType::Conjuction) {
+        } elseif ($module->type === ModuleType::Conjunction) {
             $state->conjunctions[$module->name][$pulse->source] = $pulse->highPulse;
             $outputHighPulse = false;
 

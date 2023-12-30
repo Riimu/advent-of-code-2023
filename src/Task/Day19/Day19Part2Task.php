@@ -22,7 +22,9 @@ class Day19Part2Task extends AbstractDay19Task
             if ($workflow === Workflow::WORKFLOW_ACCEPTED) {
                 $acceptedRanges[] = $ranges;
                 continue;
-            } elseif ($workflow === Workflow::WORKFLOW_REJECTED) {
+            }
+
+            if ($workflow === Workflow::WORKFLOW_REJECTED) {
                 continue;
             }
 

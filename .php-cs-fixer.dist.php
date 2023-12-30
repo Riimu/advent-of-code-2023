@@ -26,6 +26,7 @@ return (new PhpCsFixer\Config())
         'no_extra_blank_lines' => ['tokens' => ['extra', 'curly_brace_block']],
         'no_unused_imports' => true,
         'ordered_imports' => ['imports_order' => ['class', 'function', 'const'], 'sort_algorithm' => 'alpha'],
+        'single_quote' => true,
         'type_declaration_spaces' => true,
     ])
     ->setFinder($finder);

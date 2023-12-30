@@ -43,9 +43,9 @@ abstract class AbstractDay23Task implements TaskInterface
     protected function solve(Day23Input $input): int
     {
         $startY = 0;
-        $startX = $this->findSymbolInRow($input->map, $startY, Day23Input::NODE_SPACE);
+        $startX = $this->findSpace($input->map, $startY);
         $endY = \count($input->map) - 1;
-        $endX = $this->findSymbolInRow($input->map, $endY, Day23Input::NODE_SPACE);
+        $endX = $this->findSpace($input->map, $endY);
         $junctions = $this->mapAllJunctions($input->map, $startX, $startY, $endX, $endY);
 
         return $this->findLongestPath($junctions);
@@ -54,13 +54,12 @@ abstract class AbstractDay23Task implements TaskInterface
     /**
      * @param array<int, array<int, string>> $map
      * @param int $row
-     * @param string $symbol
      * @return int
      */
-    private function findSymbolInRow(array $map, int $row, string $symbol): int
+    private function findSpace(array $map, int $row): int
     {
         foreach ($map[$row] as $x => $node) {
-            if ($node === $symbol) {
+            if ($node === Day23Input::NODE_SPACE) {
                 return $x;
             }
         }
