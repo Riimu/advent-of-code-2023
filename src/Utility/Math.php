@@ -23,7 +23,7 @@ class Math
         $maxFactors = [];
 
         foreach ($numbers as $number) {
-            foreach (array_count_values(self::getFactors($number)) as $factor => $count) {
+            foreach (self::getFactors($number) as $factor => $count) {
                 $maxFactors[$factor] = max($maxFactors[$factor] ?? 0, $factor ** $count);
             }
         }
@@ -42,22 +42,29 @@ class Math
 
         foreach (self::getPrimes() as $prime) {
             if ($prime > $squareRoot) {
-                $factors[] = $number;
                 break;
             }
 
-            while ($number % $prime === 0) {
-                $factors[] = $prime;
-                $number = intdiv($number, $prime);
-                $squareRoot = (int) sqrt($number);
+            if ($number % $prime === 0) {
+                $count = 1;
+                $divisor = $prime;
 
-                if ($number === 1) {
-                    break 2;
+                while ($number % ($divisor * $prime) === 0) {
+                    $count++;
+                    $divisor *= $prime;
                 }
+
+                if ($number === $divisor) {
+                    return $factors + [$prime => $count];
+                }
+
+                $factors[$prime] = $count;
+                $number = intdiv($number, $divisor);
+                $squareRoot = (int) sqrt($number);
             }
         }
 
-        return $factors;
+        return $factors + [$number => 1];
     }
 
     /**
